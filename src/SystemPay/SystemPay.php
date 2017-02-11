@@ -73,12 +73,7 @@ class SystemPay extends \SoapClient
      */
     public function getDatetime($timestamp = null)
     {
-        $dateTime = new \DateTime('now', new \DateTimeZone('Europe/London'));
-        if (!is_null($timestamp)) {
-            $dateTime->setTimestamp($timestamp);
-        }
-
-        return $dateTime->format('Y-m-d\TH:i:s\Z');
+        return gmdate('Y-m-d\TH:i:s\Z', empty($timestamp) ? time() : $timestamp);
     }
 
     /**
