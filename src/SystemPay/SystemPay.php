@@ -95,6 +95,13 @@ class SystemPay extends \SoapClient
                        trim($this->logBeautifyXml($this->getSoapClient()->__getLastResponse())) . "\r\n\r\n" .
                        "\r\n";
 
+            // Mask credit card numbers and csc
+            $logData = preg_replace(['/<number>([0-9]{6})[0-9]+([0-9]{4})<\/number>/i',
+                                     '/<cardSecurityCode>[0-9]{1,4}<\/cardSecurityCode>/i'],
+                                    ['<number>\\1xxxxxx\\2</number>',
+                                     '<cardSecurityCode>xxx</cardSecurityCode>'],
+                                    $logData);
+
             // Write log
             file_put_contents($this->logFile, $logData, FILE_APPEND);
         }
@@ -310,6 +317,23 @@ class SystemPay extends \SoapClient
     }
 
     /**
+     * Get payment detail
+     *
+     * @param \SystemPay\model\QueryRequest $queryRequest
+     *
+     * @return string[] Array describe status and transaction id
+     */
+    public function getPaymentDetail(QueryRequest $queryRequest)
+    {
+        // Do Soap request
+        $result = $this->soapRequest(__FUNCTION__,
+                                     ['queryRequest' => $queryRequest]);
+
+        return ['status'          => $result->commonResponse->transactionStatusLabel,
+                'transactionUuid' => $result->paymentResponse->transactionUuid];
+    }
+
+    /**
      * Create token
      *
      * @param \SystemPay\model\CardRequest     $cardRequest
@@ -323,8 +347,6 @@ class SystemPay extends \SoapClient
         $result = $this->soapRequest(__FUNCTION__,
                                      ['cardRequest'     => $cardRequest,
                                       'customerRequest' => $customerRequest]);
-
-        var_dump($result, $result->commonResponse);
 
         return $result->commonResponse->paymentToken;
     }
