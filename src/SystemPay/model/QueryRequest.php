@@ -6,6 +6,7 @@ namespace SystemPay\model;
  *
  * @package SystemPay\model
  *
+ * @property string $uuid         Unique id transaction reference
  * @property string $paymentToken Credit card token
  */
 class QueryRequest extends Object
@@ -17,6 +18,8 @@ class QueryRequest extends Object
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['paymentToken' => 'ans..64'], $data);
+        parent::__construct(['uuid'         => 'string',
+                             'paymentToken' => 'ans..64'],
+                            $data);
     }
 }
