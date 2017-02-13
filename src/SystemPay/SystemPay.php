@@ -312,13 +312,13 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Get payment detail
+     * Get payment details
      *
      * @param \SystemPay\model\QueryRequest $queryRequest
      *
      * @return string[] Array describe status and transaction id
      */
-    public function getPaymentDetail(QueryRequest $queryRequest)
+    public function getPaymentDetails(QueryRequest $queryRequest)
     {
         // Do Soap request
         $result = $this->soapRequest(__FUNCTION__,
