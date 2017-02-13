@@ -24,7 +24,6 @@ use SystemPay\model\ThreeDSRequest;
 class SystemPay extends \SoapClient
 {
     const SOAP_WSDL = 'https://paiement.systempay.fr/vads-ws/v5?wsdl';
-    //const SOAP_WSDL = 'http://appv2.bettr.local/v5.xml';
     const SOAP_HEADERS_NAMESPACE = 'http://v5.ws.vads.lyra.com/Header/';
     /** @var \SoapClient SOAP Client */
     private $soapClient;
