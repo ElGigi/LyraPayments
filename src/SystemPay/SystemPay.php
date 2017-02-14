@@ -55,6 +55,11 @@ class SystemPay extends \SoapClient
         $this->certificate = $certificate;
         $this->mode = $mode;
 
+        // Context options
+        $contextOptions = array_merge_recursive($contextOptions,
+                                                ['ssl' => ['peer_name'   => 'paiement.systempay.fr',
+                                                           'SNI_enabled' => true]]);
+
         // Init SOAP client
         $this->soapClient = new \SoapClient(self::SOAP_WSDL,
                                             ['trace'          => true,
