@@ -57,7 +57,8 @@ class SystemPay extends \SoapClient
 
         // Context options
         $contextOptions = array_merge_recursive($contextOptions,
-                                                ['ssl' => ['peer_name'   => 'paiement.systempay.fr',
+                                                ['ssl' => ['verify_peer' => false,
+                                                           'peer_name'   => 'paiement.systempay.fr',
                                                            'SNI_enabled' => true]]);
 
         // Init SOAP client
