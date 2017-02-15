@@ -56,10 +56,12 @@ class SystemPay extends \SoapClient
         $this->mode = $mode;
 
         // Context options
-        $contextOptions = array_merge_recursive($contextOptions,
-                                                ['ssl' => ['verify_peer' => false,
-                                                           'peer_name'   => 'paiement.systempay.fr',
-                                                           'SNI_enabled' => true]]);
+        $contextOptions = array_replace_recursive(['ssl' => ['peer_name'        => 'paiement.systempay.fr',
+                                                             'verify_peer'      => true,
+                                                             'verify_peer_name' => true,
+                                                             'cafile'           => __DIR__ . '/cacert.pem',
+                                                             'SNI_enabled'      => true]],
+                                                  $contextOptions);
 
         // Init SOAP client
         $this->soapClient = new \SoapClient(self::SOAP_WSDL,
