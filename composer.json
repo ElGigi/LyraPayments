@@ -1,6 +1,6 @@
 {
   "name": "elgigi/systempay",
-  "description": "SystemPay API v5",
+  "description": "SystemPay WS v5 PHP Client",
   "minimum-stability": "stable",
   "license": "MIT",
   "homepage": "https://elgigi.fr",

@@ -1,1 +1,1 @@
-# SystemPay v5 PHP Client
+# SystemPay WS v5 PHP Client
