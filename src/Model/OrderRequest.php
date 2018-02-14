@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class OrderRequest
+ * Class OrderRequest.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  *
  * @property string  $orderId Order id
  * @property ExtInfo $extInfo Variable

@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class PaymentRequest
+ * Class PaymentRequest.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  *
  * @property string $amount              Payment amount
  * @property string $currency            Payment currency

@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class QueryRequest
+ * Class QueryRequest.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  *
  * @property string $uuid         Unique id transaction reference
  * @property string $paymentToken Credit card token

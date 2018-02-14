@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class ThreeDSRequest
+ * Class ThreeDSRequest.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  *
  * @property string $mode      3DS mode
  * @property string $requestId Request id

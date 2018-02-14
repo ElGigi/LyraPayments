@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class Object
+ * Class Object.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  */
 abstract class Object
 {
@@ -16,10 +17,11 @@ abstract class Object
     /**
      * Object constructor.
      *
-     * @param string[] $dataDeclaration Array of variables (example: ['reference': 'n..80', 'title' => '[PRIVATE,COMPANY]'])
+     * @param string[] $dataDeclaration Array of variables (example: ['reference': 'n..80', 'title' =>
+     *                                  '[PRIVATE,COMPANY]'])
      * @param array    $data            Default data
      */
-    public function __construct($dataDeclaration, array $data = [])
+    public function __construct(array $dataDeclaration, array $data = [])
     {
         $this->dataDeclaration = $dataDeclaration;
 
@@ -28,11 +30,11 @@ abstract class Object
     }
 
     /**
-     * __set_state() magic method
+     * __set_state() magic method.
      *
      * @return array
      */
-    public function __set_state()
+    public function __set_state(): array
     {
         $vars = [];
 
@@ -48,11 +50,11 @@ abstract class Object
     }
 
     /**
-     * __debugInfo() magic method
+     * __debugInfo() magic method.
      *
      * @return array
      */
-    public function __debugInfo()
+    public function __debugInfo(): array
     {
         $vars = [];
 
@@ -72,13 +74,13 @@ abstract class Object
     }
 
     /**
-     * __get() magic method
+     * __get() magic method.
      *
      * @param string $name
      *
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         if (array_key_exists($name, $this->dataDeclaration)) {
             if (array_key_exists($name, $this->data)) {
@@ -94,12 +96,12 @@ abstract class Object
     }
 
     /**
-     * __set() magic method
+     * __set() magic method.
      *
      * @param string $name
      * @param mixed  $value
      */
-    public function __set($name, $value)
+    public function __set(string $name, $value)
     {
         if (array_key_exists($name, $this->dataDeclaration)) {
             if ($this::controlFormat($this->dataDeclaration[$name], $value)) {
@@ -113,26 +115,30 @@ abstract class Object
     }
 
     /**
-     * Set data
+     * Set data.
      *
      * @param array $data
+     *
+     * @return \ElGigi\SystemPay\Model\Object
      */
-    public function setData(array $data)
+    public function setData(array $data): \ElGigi\SystemPay\Model\Object
     {
         foreach ($data as $name => $value) {
             $this->__set($name, $value);
         }
+
+        return $this;
     }
 
     /**
-     * Control format
+     * Control format.
      *
      * @param string $type  Type of variable
      * @param string $value Value to control
      *
      * @return bool
      */
-    public static function controlFormat($type, $value)
+    public static function controlFormat(string $type, string $value): bool
     {
         $bReturn = false;
 

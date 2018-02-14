@@ -1,10 +1,10 @@
 <?php
-namespace SystemPay\model;
+namespace ElGigi\SystemPay\model;
 
 /**
  * Class CardRequest
  *
- * @package SystemPay\model
+ * @package SystemPay\Model
  *
  * @property string $paymentToken       Credit card token
  * @property string $number             Credit card number

@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class TechRequest
+ * Class TechRequest.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  *
  * @property string $browserUserAgent Browser user agent header value
  * @property string $browserAccept    Browser accept header value

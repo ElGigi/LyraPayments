@@ -1,10 +1,10 @@
 <?php
-namespace SystemPay\model;
+namespace ElGigi\SystemPay\model;
 
 /**
  * Class ExtInfo
  *
- * @package SystemPay\model
+ * @package SystemPay\Model
  *
  * @property string $key   Variable key
  * @property string $value Variable value

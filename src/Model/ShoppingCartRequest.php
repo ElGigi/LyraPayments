@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class ShoppingCartRequest
+ * Class ShoppingCartRequest.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  *
  * @property int          $insuranceAmount Insurance amount
  * @property int          $shippingAmount  Shipping amount

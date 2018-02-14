@@ -1,10 +1,10 @@
 <?php
-namespace SystemPay\model;
+namespace ElGigi\SystemPay\model;
 
 /**
  * Class ExtraDetails
  *
- * @package SystemPay\model
+ * @package SystemPay\Model
  *
  * @property string $ipAddress     IP address
  * @property string $fingerPrintId Unique session id

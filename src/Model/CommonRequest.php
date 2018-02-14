@@ -1,10 +1,10 @@
 <?php
-namespace SystemPay\model;
+namespace ElGigi\SystemPay\model;
 
 /**
  * Class CommonRequest
  *
- * @package SystemPay\model
+ * @package SystemPay\Model
  *
  * @property string $paymentSource  Payment source
  * @property string $submissionDate Submission date time

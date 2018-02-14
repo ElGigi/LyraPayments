@@ -1,10 +1,11 @@
 <?php
-namespace SystemPay\model;
+
+namespace ElGigi\SystemPay\Model;
 
 /**
- * Class Response
+ * Class Response.
  *
- * @package SystemPay\model
+ * @package ElGigi\SystemPay\Model
  */
 class Response
 {

@@ -1,24 +1,25 @@
 <?php
-namespace SystemPay;
 
-use SystemPay\exception\ResponseException;
-use SystemPay\exception\SystemPayException;
-use SystemPay\model\CardRequest;
-use SystemPay\model\CommonRequest;
-use SystemPay\model\CustomerRequest;
-use SystemPay\model\Object;
-use SystemPay\model\OrderRequest;
-use SystemPay\model\PaymentRequest;
-use SystemPay\model\QueryRequest;
-use SystemPay\model\Response;
-use SystemPay\model\ShoppingCartRequest;
-use SystemPay\model\TechRequest;
-use SystemPay\model\ThreeDSRequest;
+namespace ElGigi\SystemPay;
+
+use ElGigi\SystemPay\Exception\ResponseException;
+use ElGigi\SystemPay\Exception\SystemPayException;
+use ElGigi\SystemPay\Model\CardRequest;
+use ElGigi\SystemPay\Model\CommonRequest;
+use ElGigi\SystemPay\Model\CustomerRequest;
+use ElGigi\SystemPay\Model\Object;
+use ElGigi\SystemPay\Model\OrderRequest;
+use ElGigi\SystemPay\Model\PaymentRequest;
+use ElGigi\SystemPay\Model\QueryRequest;
+use ElGigi\SystemPay\Model\Response;
+use ElGigi\SystemPay\Model\ShoppingCartRequest;
+use ElGigi\SystemPay\Model\TechRequest;
+use ElGigi\SystemPay\Model\ThreeDSRequest;
 
 /**
- * Class SystemPay
+ * Class SystemPay.
  *
- * @package SystemPay
+ * @package ElGigi\SystemPay
  * @see     \SoapClient
  */
 class SystemPay extends \SoapClient
@@ -43,12 +44,12 @@ class SystemPay extends \SoapClient
     /**
      * SystemPay constructor.
      *
-     * @param mixed  $shopId         Shop id
-     * @param mixed  $certificate    Shop certificate
+     * @param string $shopId         Shop id
+     * @param string $certificate    Shop certificate
      * @param string $mode           Transaction type (TEST or PRODUCTION)
      * @param array  $contextOptions Context options
      */
-    public function __construct($shopId, $certificate, $mode = 'TEST', array $contextOptions = [])
+    public function __construct(string $shopId, string $certificate, string $mode = 'TEST', array $contextOptions = [])
     {
         // Init variables
         $this->shopId = $shopId;
@@ -72,19 +73,19 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Datetime ISO 8601
+     * Datetime ISO 8601.
      *
      * @param int|null $timestamp
      *
      * @return string
      */
-    public function getDatetime($timestamp = null)
+    public function getDatetime(?int $timestamp = null): string
     {
         return gmdate('Y-m-d\TH:i:s\Z', empty($timestamp) ? time() : $timestamp);
     }
 
     /**
-     * Log request
+     * Log request.
      */
     private function log()
     {
@@ -110,13 +111,13 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Log beautify
+     * Log beautify.
      *
      * @param string $xml
      *
-     * @return $xml
+     * @return string
      */
-    private function logBeautifyXml($xml)
+    private function logBeautifyXml(string $xml): string
     {
         $dom = new \DOMDocument;
         $dom->preserveWhiteSpace = false;
@@ -127,27 +128,31 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Set log file
+     * Set log file.
      *
      * @param string $logFile Log filename
+     *
+     * @return \ElGigi\SystemPay\SystemPay
      */
-    public function setLogFile($logFile)
+    public function setLogFile(string $logFile): SystemPay
     {
         $this->logFile = $logFile;
+
+        return $this;
     }
 
     /**
-     * Get Soap client
+     * Get Soap client.
      *
      * @return \SoapClient
      */
-    public function getSoapClient()
+    public function getSoapClient(): \SoapClient
     {
         return $this->soapClient;
     }
 
     /**
-     * Soap request
+     * Soap request.
      *
      * @param string $function_name Function name
      * @param array  $args          Arguments
@@ -156,7 +161,7 @@ class SystemPay extends \SoapClient
      *
      * @throws SystemPayException
      */
-    private function soapRequest($function_name, $args)
+    private function soapRequest(string $function_name, array $args)
     {
         $result = null;
 
@@ -215,11 +220,11 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Add Soap headers
+     * Add Soap headers.
      *
      * @return \SoapHeader[]
      */
-    private function getHeaders()
+    private function getHeaders(): array
     {
         $requestId = $this->genUuid();
         $timestamp = $this->getDatetime();
@@ -240,11 +245,11 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Generate an unique request id
+     * Generate an unique request id.
      *
      * @return string
      */
-    private function genUuid()
+    private function genUuid(): string
     {
         return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
                        mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -255,21 +260,25 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Set common request
+     * Set common request.
      *
-     * @param \SystemPay\model\CommonRequest $commonRequest
+     * @param \ElGigi\SystemPay\Model\CommonRequest $commonRequest
+     *
+     * @return \ElGigi\SystemPay\SystemPay
      */
-    public function setCommonRequest(CommonRequest $commonRequest)
+    public function setCommonRequest(CommonRequest $commonRequest): SystemPay
     {
         $this->commonRequest = $commonRequest;
+
+        return $this;
     }
 
     /**
-     * Get common request
+     * Get common request.
      *
-     * @return \SystemPay\model\CommonRequest
+     * @return \ElGigi\SystemPay\Model\CommonRequest
      */
-    public function getCommonRequest()
+    public function getCommonRequest(): CommonRequest
     {
         if (is_null($this->commonRequest)) {
             $this->commonRequest = new CommonRequest;
@@ -280,19 +289,26 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Create payment
+     * Create payment.
      *
-     * @param \SystemPay\model\ThreeDSRequest|null      $threeDSRequest
-     * @param \SystemPay\model\PaymentRequest           $paymentRequest
-     * @param \SystemPay\model\OrderRequest             $orderRequest
-     * @param \SystemPay\model\CardRequest              $cardRequest
-     * @param \SystemPay\model\CustomerRequest|null     $customerRequest
-     * @param \SystemPay\model\TechRequest|null         $techRequest
-     * @param \SystemPay\model\ShoppingCartRequest|null $shoppingCartRequest
+     * @param \ElGigi\SystemPay\Model\ThreeDSRequest|null      $threeDSRequest
+     * @param \ElGigi\SystemPay\Model\PaymentRequest           $paymentRequest
+     * @param \ElGigi\SystemPay\Model\OrderRequest             $orderRequest
+     * @param \ElGigi\SystemPay\Model\CardRequest              $cardRequest
+     * @param \ElGigi\SystemPay\Model\CustomerRequest|null     $customerRequest
+     * @param \ElGigi\SystemPay\Model\TechRequest|null         $techRequest
+     * @param \ElGigi\SystemPay\Model\ShoppingCartRequest|null $shoppingCartRequest
      *
      * @return string[] Array describe status and transaction id
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    public function createPayment(ThreeDSRequest $threeDSRequest = null, PaymentRequest $paymentRequest, OrderRequest $orderRequest, CardRequest $cardRequest, CustomerRequest $customerRequest = null, TechRequest $techRequest = null, ShoppingCartRequest $shoppingCartRequest = null)
+    public function createPayment(ThreeDSRequest $threeDSRequest = null,
+                                  PaymentRequest $paymentRequest,
+                                  OrderRequest $orderRequest,
+                                  CardRequest $cardRequest,
+                                  CustomerRequest $customerRequest = null,
+                                  TechRequest $techRequest = null,
+                                  ShoppingCartRequest $shoppingCartRequest = null): array
     {
         $soapParams = [];
         if (!is_null($threeDSRequest)) {
@@ -319,13 +335,14 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Get payment details
+     * Get payment details.
      *
-     * @param \SystemPay\model\QueryRequest $queryRequest
+     * @param \ElGigi\SystemPay\Model\QueryRequest $queryRequest
      *
      * @return string[] Array describe status and transaction id
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    public function getPaymentDetails(QueryRequest $queryRequest)
+    public function getPaymentDetails(QueryRequest $queryRequest): array
     {
         // Do Soap request
         $result = $this->soapRequest(__FUNCTION__,
@@ -336,14 +353,15 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Create token
+     * Create token.
      *
-     * @param \SystemPay\model\CardRequest     $cardRequest
-     * @param \SystemPay\model\CustomerRequest $customerRequest
+     * @param \ElGigi\SystemPay\Model\CardRequest     $cardRequest
+     * @param \ElGigi\SystemPay\Model\CustomerRequest $customerRequest
      *
-     * @return Response
+     * @return \ElGigi\SystemPay\Model\Response
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    public function createToken(CardRequest $cardRequest, CustomerRequest $customerRequest)
+    public function createToken(CardRequest $cardRequest, CustomerRequest $customerRequest): Response
     {
         // Do Soap request
         $result = $this->soapRequest(__FUNCTION__,
@@ -354,13 +372,14 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Cancel token
+     * Cancel token.
      *
-     * @param \SystemPay\model\QueryRequest $queryRequest
+     * @param \ElGigi\SystemPay\Model\QueryRequest $queryRequest
      *
      * @return true
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    public function cancelToken(QueryRequest $queryRequest)
+    public function cancelToken(QueryRequest $queryRequest): boolean
     {
         // Do Soap request
         $this->soapRequest(__FUNCTION__,

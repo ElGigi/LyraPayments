@@ -1,10 +1,10 @@
 <?php
-namespace SystemPay\model;
+namespace ElGigi\SystemPay\model;
 
 /**
  * Class CustomerRequest
  *
- * @package SystemPay\model
+ * @package SystemPay\Model
  *
  * @property BillingDetails  $billingDetails  Billing details
  * @property ShippingDetails $shippingDetails Shipping details
