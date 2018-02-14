@@ -367,7 +367,7 @@ class SystemPay extends \SoapClient
      *
      * @param \ElGigi\SystemPay\Model\QueryRequest $queryRequest
      *
-     * @return string[] Array describe status and transaction id
+     * @return array Array describe status, transaction id and full detail
      * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function getPaymentDetails(QueryRequest $queryRequest): array
