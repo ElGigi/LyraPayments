@@ -40,6 +40,8 @@ class SystemPay extends \SoapClient
     private $logFile;
     /** @var CommonRequest */
     private $commonRequest;
+    /** @var object|null Last result */
+    private $lastResult;
 
     /**
      * SystemPay constructor.
@@ -159,9 +161,9 @@ class SystemPay extends \SoapClient
      *
      * @return mixed
      *
-     * @throws SystemPayException
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    private function soapRequest(string $function_name, array $args)
+    public function soapRequest(string $function_name, array $args)
     {
         $result = null;
 
@@ -185,18 +187,22 @@ class SystemPay extends \SoapClient
             if (!property_exists($result, $function_name . 'Result')) {
                 throw new SystemPayException('Bad format of result', 0);
             } else {
-                $result = $result->{$function_name . 'Result'};
+                $this->lastResult = $result->{$function_name . 'Result'};
 
-                if (!property_exists($result, 'commonResponse')) {
+                if (!property_exists($this->lastResult, 'commonResponse')) {
                     throw new SystemPayException('Bad format of response', 0);
                 } else {
-                    if (isset($result->commonResponse->responseCode) && $result->commonResponse->responseCode != 0) {
-                        throw new ResponseException($result->commonResponse->responseCodeDetail, $result->commonResponse->responseCode);
+                    if (isset($this->lastResult->commonResponse->responseCode) && $this->lastResult->commonResponse->responseCode != 0) {
+                        throw new ResponseException($this->lastResult->commonResponse->responseCodeDetail, $this->lastResult->commonResponse->responseCode);
                     }
                 }
             }
         } catch (\SoapFault $e) {
+            $this->lastResult = null;
             throw new SystemPayException($e->getMessage(), $e->getCode(), $e);
+        } catch (SystemPayException $e) {
+            $this->lastResult = null;
+            throw $e;
         } finally {
             // Log request and response
             $this->log();
@@ -216,7 +222,7 @@ class SystemPay extends \SoapClient
             }
         }
 
-        return $result;
+        return $this->lastResult;
     }
 
     /**
@@ -289,6 +295,30 @@ class SystemPay extends \SoapClient
     }
 
     /**
+     * Return last result object or null.
+     *
+     * @return null|array
+     */
+    public function getLastResult(): ?array
+    {
+        if (!is_null($this->lastResult)) {
+            $resultArray = [];
+
+            foreach (json_decode(json_encode($this->lastResult), true) as $key => $value) {
+                if (substr($value, -8) == 'Response') {
+                    $resultArray[substr($value, 0, -8)] = $value;
+                } else {
+                    $resultArray[$key] = $value;
+                }
+            }
+
+            return $resultArray;
+        }
+
+        return null;
+    }
+
+    /**
      * Create payment.
      *
      * @param \ElGigi\SystemPay\Model\ThreeDSRequest|null      $threeDSRequest
@@ -347,6 +377,27 @@ class SystemPay extends \SoapClient
         // Do Soap request
         $result = $this->soapRequest(__FUNCTION__,
                                      ['queryRequest' => $queryRequest]);
+
+        return ['status'          => $result->commonResponse->transactionStatusLabel,
+                'transactionUuid' => $result->paymentResponse->transactionUuid,
+                'detail'          => $this->getLastResult()];
+    }
+
+    /**
+     * Refund a payment.
+     *
+     * @param \ElGigi\SystemPay\Model\PaymentRequest $paymentRequest
+     * @param \ElGigi\SystemPay\Model\QueryRequest   $queryRequest
+     *
+     * @return array
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     */
+    public function refundPayment(PaymentRequest $paymentRequest, QueryRequest $queryRequest): array
+    {
+        // Do Soap request
+        $result = $this->soapRequest(__FUNCTION__,
+                                     ['paymentRequest' => $paymentRequest,
+                                      'queryRequest'   => $queryRequest]);
 
         return ['status'          => $result->commonResponse->transactionStatusLabel,
                 'transactionUuid' => $result->paymentResponse->transactionUuid];
