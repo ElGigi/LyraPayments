@@ -40,7 +40,7 @@ class SystemPay extends \SoapClient
     private $logFile;
     /** @var CommonRequest */
     private $commonRequest;
-    /** @var object|null Last result */
+    /** @var mixed Last result */
     private $lastResult;
 
     /**
@@ -165,8 +165,6 @@ class SystemPay extends \SoapClient
      */
     public function soapRequest(string $function_name, array $args)
     {
-        $result = null;
-
         try {
             // Prepare args
             $args = array_merge(['commonRequest' => $this->getCommonRequest()], $args);
