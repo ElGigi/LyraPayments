@@ -133,12 +133,12 @@ abstract class Object
     /**
      * Control format.
      *
-     * @param string $type  Type of variable
-     * @param string $value Value to control
+     * @param string        $type  Type of variable
+     * @param string|object $value Value to control
      *
      * @return bool
      */
-    public static function controlFormat(string $type, string $value): bool
+    public static function controlFormat(string $type, $value): bool
     {
         $bReturn = false;
 

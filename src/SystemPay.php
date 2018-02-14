@@ -34,9 +34,9 @@ class SystemPay extends \SoapClient
     private $certificate;
     /** @var string Transaction type (TEST or PRODUCTION) */
     private $mode;
-    /** @var string SOAP session ID */
+    /** @var string|null SOAP session ID */
     private $soapSessionId;
-    /** @var string Log filename */
+    /** @var string|null Log filename */
     private $logFile;
     /** @var CommonRequest */
     private $commonRequest;
@@ -379,7 +379,7 @@ class SystemPay extends \SoapClient
      * @return true
      * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    public function cancelToken(QueryRequest $queryRequest): boolean
+    public function cancelToken(QueryRequest $queryRequest): bool
     {
         // Do Soap request
         $this->soapRequest(__FUNCTION__,
