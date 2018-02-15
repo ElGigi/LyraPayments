@@ -22,7 +22,7 @@ use ElGigi\SystemPay\Request\ThreeDS;
  *
  * @package ElGigi\SystemPay
  *
- * @method string createPayment(?ThreeDS $threeDSRequest, Payment $paymentRequest, Order $orderRequest, Card $cardRequest, ?Customer $customerRequest, ?Tech $techRequest, ?ShoppingCart $shoppingCartRequest)
+ * @method string createPayment(ThreeDS | null $threeDSRequest, Payment $paymentRequest, Order $orderRequest, Card $cardRequest, Customer | null $customerRequest, Tech | null $techRequest, ShoppingCart | null $shoppingCartRequest)
  * @method string updatePayment(Query $queryRequest, Payment $paymentRequest)
  * @method string updatePaymentDetails(Query $queryRequest, ShoppingCart $shoppingCartRequest)
  * @method string cancelPayment(Query $queryRequest)
@@ -31,18 +31,18 @@ use ElGigi\SystemPay\Request\ThreeDS;
  * @method string duplicatePayment(Payment $paymentRequest, Query $queryRequest, Order $orderRequest)
  * @method string validatePayment(Query $queryRequest)
  * @method string capturePayment(Settlement $settlementRequest)
- * @method string getPaymentDetails(Query $queryRequest, ?ExtendedResponse $extendedResponseRequest)
- * @method string verifyThreeDSEnrollment(Payment $paymentRequest, Card $cardRequest, ?Tech $techRequest, ?ThreeDS $threeDSRequest)
+ * @method string getPaymentDetails(Query $queryRequest, ExtendedResponse | null $extendedResponseRequest)
+ * @method string verifyThreeDSEnrollment(Payment $paymentRequest, Card $cardRequest, Tech | null $techRequest, ThreeDS | null $threeDSRequest)
  * @method string checkThreeDSAuthentication(ThreeDS $threeDSRequest)
  *
  * @method string createToken(Card $cardRequest, Customer $customerRequest)
- * @method string createTokenFromTransaction(Query $queryRequest, ?Card $cardRequest)
- * @method string updateToken(Query $queryRequest, ?Card $cardRequest, ?Customer $customerRequest)
+ * @method string createTokenFromTransaction(Query $queryRequest, Card | null $cardRequest)
+ * @method string updateToken(Query $queryRequest, Card | null $cardRequest, Customer | null $customerRequest)
  * @method string getTokenDetails(Query $queryRequest)
  * @method string cancelToken(Query $queryRequest)
  * @method string reactivateToken(Query $queryRequest)
  * @method string createSubscription(Order $orderRequest, Subscription $subscriptionRequest, Card $cardRequest)
- * @method string updateSubscription(Query $queryRequest, Subscription $subscriptionRequest, ?Payment $paymentRequest)
+ * @method string updateSubscription(Query $queryRequest, Subscription $subscriptionRequest, Payment | null $paymentRequest)
  * @method string getSubscriptionDetails(Query $queryRequest)
  * @method string cancelSubscription(Query $queryRequest)
  */
@@ -403,14 +403,14 @@ class SystemPay
     public function __call(string $name, array $arguments)
     {
         // Check if method exists
-        if (isset($definitions[$name])) {
+        if (isset(static::METHODS[$name])) {
             // Check number of arguments types
             if (($nbArgs = count(static::METHODS[$name])) == count($arguments)) {
                 $finalArguments = [];
 
                 // Check arguments
                 $iArg = 0;
-                foreach (static::METHODS[$name][$name] as $argumentName => $type) {
+                foreach (static::METHODS[$name] as $argumentName => $type) {
                     $finalArguments = [];
                     $required = substr($argumentName, 0, 1) != '?';
 
