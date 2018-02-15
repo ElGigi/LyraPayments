@@ -1,7 +1,12 @@
 # SystemPay WS v5 PHP Client
 
-PHP client to dialog with SystemPay web services of french Natixis banks.
+[![Latest Version](http://img.shields.io/packagist/v/elgigi/systempay.svg?style=flat-square)](https://github.com/ElGigi/SystemPay/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Coverage Status](https://img.shields.io/scrutinizer/build/g/elgigi/systempay.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/systempay/build-status/master)
+[![Quality Score](https://img.shields.io/scrutinizer/g/elgigi/systempay.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/systempay)
+[![Total Downloads](https://img.shields.io/packagist/dt/elgigi/systempay.svg?style=flat-square)](https://packagist.org/packages/elgigi/systempay)
 
+PHP client to dialog with SystemPay web services of french Natixis banks.
 
 ## Installation
 
