@@ -10,6 +10,8 @@
 
 namespace ElGigi\SystemPay;
 
+use ElGigi\SystemPay\Exception\SystemPayException;
+
 /**
  * Class AbstractObject.
  *
@@ -25,9 +27,10 @@ abstract class AbstractObject
     /**
      * AbstractObject constructor.
      *
-     * @param string[] $dataDeclaration Array of variables (example: ['reference': 'n..80', 'title' =>
-     *                                  '[PRIVATE,COMPANY]'])
+     * @param string[] $dataDeclaration Array of variables (example: ['reference': 'n..80', 'title' => '[PRIVATE,COMPANY]'])
      * @param array    $data            Default data
+     *
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function __construct(array $dataDeclaration, array $data = [])
     {
@@ -87,6 +90,7 @@ abstract class AbstractObject
      * @param string $name
      *
      * @return mixed
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function __get(string $name)
     {
@@ -97,10 +101,8 @@ abstract class AbstractObject
                 return null;
             }
         } else {
-            trigger_error('Undefined variable "' . $name . '" in class "' . get_class($this) . '"', E_USER_WARNING);
+            throw new SystemPayException(sprintf('Undefined variable "%s" in class "%s"', $name, get_class($this)));
         }
-
-        return null;
     }
 
     /**
@@ -108,6 +110,8 @@ abstract class AbstractObject
      *
      * @param string $name
      * @param mixed  $value
+     *
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function __set(string $name, $value)
     {
@@ -115,11 +119,25 @@ abstract class AbstractObject
             if ($this::controlFormat($this->dataDeclaration[$name], $value)) {
                 $this->data[$name] = $value;
             } else {
-                trigger_error('Bad format for property "' . $name . '" (' . $this->dataDeclaration[$name] . ') in class "' . get_class($this) . '", ' . (is_object($value) ? get_class($value) : '"' . $value . '"') . ' given.');
+                throw new SystemPayException(sprintf('Bad format for property "%s" (%s) in class "%s", %s given.',
+                                                     $name, $this->dataDeclaration[$name], get_class($this), (is_object($value) ? get_class($value) : '"' . $value . '"')));
             }
         } else {
-            trigger_error('Undefined property "' . $name . '" in class "' . get_class($this) . '", or readonly.');
+            throw new SystemPayException(sprintf('Undefined property "%s" in class "%s", or readonly.', $name, get_class($this)));
         }
+    }
+
+    /**
+     * Get value of variable.
+     *
+     * @param string $name
+     *
+     * @return mixed
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     */
+    public function get(string $name)
+    {
+        return $this->__get($name);
     }
 
     /**
@@ -128,6 +146,7 @@ abstract class AbstractObject
      * @param array $data
      *
      * @return \ElGigi\SystemPay\AbstractObject
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function setData(array $data): AbstractObject
     {
@@ -148,51 +167,42 @@ abstract class AbstractObject
      */
     public static function controlFormat(string $type, $value): bool
     {
-        $bReturn = false;
-
         if (is_object($value)) {
-            $bReturn = is_subclass_of($type, __CLASS__) && is_a($value, $type);
+            return is_subclass_of($type, __CLASS__) && is_a($value, $type);
         } else {
-            if ($type == 'bool') {
-                $bReturn = is_bool($value);
-            } else {
-                if ($type == 'datetime') {
-                    $bReturn = preg_match('/([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))/', $value) == 1;
-                } else {
-                    if ($type == 'int') {
-                        $bReturn = is_int($value);
-                    } else {
-                        if ($type == 'long') {
-                            $bReturn = is_long($value);
-                        } else {
-                            if ($type == 'string') {
-                                $bReturn = is_string($value);
-                            } else {
-                                $match = [];
-                                if (preg_match('/^([ans]{1,3})((\.\.)?([0-9]+))$/i', $type, $match)) {
-                                    $regexControl = '[' .
-                                                    (stripos($match[1], 'a') !== false ? 'a-z' : '') .
-                                                    (stripos($match[1], 'n') !== false ? '0-9' : '') .
-                                                    (stripos($match[1], 's') !== false ? '\V' : '') .
-                                                    ']' .
-                                                    '{' .
-                                                    (isset($match[3]) ? '1,' : '') .
-                                                    $match[4] .
-                                                    '}';
+            switch ($type) {
+                case 'bool':
+                    return is_bool($value);
+                case 'datetime':
+                    return preg_match('/([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))/', $value) == 1;
+                case 'int':
+                    return is_int($value);
+                case 'long':
+                    return is_long($value);
+                case 'string':
+                    return is_string($value);
+                default:
+                    $match = [];
+                    if (preg_match('/^([ans]{1,3})((\.\.)?([0-9]+))$/i', $type, $match)) {
+                        $regexControl = '[' .
+                                        (stripos($match[1], 'a') !== false ? 'a-z' : '') .
+                                        (stripos($match[1], 'n') !== false ? '0-9' : '') .
+                                        (stripos($match[1], 's') !== false ? '\V' : '') .
+                                        ']' .
+                                        '{' .
+                                        (!empty($match[3]) ? '1,' : '') .
+                                        $match[4] .
+                                        '}';
 
-                                    $bReturn = preg_match('/^' . $regexControl . '$/i', $value) == 1;
-                                } else {
-                                    if (preg_match('/^\[(.*)\]/', $type, $match)) {
-                                        $bReturn = in_array($value, array_map('trim', explode(',', $match[1])));
-                                    }
-                                }
-                            }
+                        return preg_match('/^' . $regexControl . '$/iu', $value) == 1;
+                    } else {
+                        if (preg_match('/^\[(.*)\]/', $type, $match)) {
+                            return in_array($value, array_map('trim', explode(',', $match[1])));
                         }
                     }
-                }
             }
         }
 
-        return $bReturn;
+        return false;
     }
 }
