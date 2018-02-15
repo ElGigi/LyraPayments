@@ -1,10 +1,13 @@
 <?php
-namespace ElGigi\SystemPay\model;
+
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class CardRequest
+ * Request Card.
  *
- * @package SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $paymentToken       Credit card token
  * @property string $number             Credit card number
@@ -14,10 +17,10 @@ namespace ElGigi\SystemPay\model;
  * @property string $cardSecurityCode   Credit card security code
  * @property string $cardHolderBirthday Credit card holder birthday
  */
-class CardRequest extends Object
+class Card extends AbstractObject
 {
     /**
-     * CardRequest constructor.
+     * Card constructor.
      *
      * @param array $data Default data
      */

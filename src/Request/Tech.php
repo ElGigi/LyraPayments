@@ -1,19 +1,21 @@
 <?php
 
-namespace ElGigi\SystemPay\Model;
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class TechRequest.
+ * Request Tech.
  *
- * @package ElGigi\SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $browserUserAgent Browser user agent header value
  * @property string $browserAccept    Browser accept header value
  */
-class TechRequest extends Object
+class Tech extends AbstractObject
 {
     /**
-     * TechRequest constructor.
+     * Tech constructor.
      *
      * @param array $data Default data
      */

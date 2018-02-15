@@ -1,15 +1,18 @@
 <?php
-namespace ElGigi\SystemPay\model;
+
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class ExtraDetails
+ * Request ExtraDetails.
  *
- * @package SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $ipAddress     IP address
  * @property string $fingerPrintId Unique session id
  */
-class ExtraDetails extends Object
+class ExtraDetails extends AbstractObject
 {
     /**
      * ExtraDetails constructor.

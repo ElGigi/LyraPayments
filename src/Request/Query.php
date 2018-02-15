@@ -1,19 +1,21 @@
 <?php
 
-namespace ElGigi\SystemPay\Model;
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class QueryRequest.
+ * Request Query.
  *
- * @package ElGigi\SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $uuid         Unique id transaction reference
  * @property string $paymentToken Credit card token
  */
-class QueryRequest extends Object
+class Query extends AbstractObject
 {
     /**
-     * QueryRequest constructor.
+     * Query constructor.
      *
      * @param array $data Default data
      */

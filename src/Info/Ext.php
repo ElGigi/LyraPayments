@@ -1,18 +1,21 @@
 <?php
-namespace ElGigi\SystemPay\model;
+
+namespace ElGigi\SystemPay\Info;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class ExtInfo
+ * Info Ext.
  *
- * @package SystemPay\Model
+ * @package ElGigi\SystemPay\Info
  *
  * @property string $key   Variable key
  * @property string $value Variable value
  */
-class ExtInfo extends Object
+class Ext extends AbstractObject
 {
     /**
-     * ExtInfo constructor.
+     * Ext constructor.
      *
      * @param array $data Default data
      */

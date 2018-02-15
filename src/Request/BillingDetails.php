@@ -1,11 +1,13 @@
 <?php
 
-namespace ElGigi\SystemPay\Model;
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class BillingDetails.
+ * Request BillingDetails.
  *
- * @package ElGigi\SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $reference         Buyer reference
  * @property string $title             Title of buyer
@@ -23,7 +25,7 @@ namespace ElGigi\SystemPay\Model;
  * @property string $country           Buyer country
  * @property string $identityCode      Buyer identity code
  */
-class BillingDetails extends Object
+class BillingDetails extends AbstractObject
 {
     /**
      * BillingDetails constructor.

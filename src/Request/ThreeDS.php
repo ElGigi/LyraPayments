@@ -1,11 +1,13 @@
 <?php
 
-namespace ElGigi\SystemPay\Model;
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class ThreeDSRequest.
+ * Request ThreeDS.
  *
- * @package ElGigi\SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $mode      3DS mode
  * @property string $requestId Request id
@@ -17,10 +19,10 @@ namespace ElGigi\SystemPay\Model;
  * @property string $cavv      ACS certificate
  * @property string $algorithm Algorithm
  */
-class ThreeDSRequest extends Object
+class ThreeDS extends AbstractObject
 {
     /**
-     * ThreeDSRequest constructor.
+     * ThreeDS constructor.
      *
      * @param array $data Default data
      */

@@ -1,13 +1,13 @@
 <?php
 
-namespace ElGigi\SystemPay\Model;
+namespace ElGigi\SystemPay;
 
 /**
- * Class Object.
+ * Class AbstractObject.
  *
- * @package ElGigi\SystemPay\Model
+ * @package ElGigi\SystemPay
  */
-abstract class Object
+abstract class AbstractObject
 {
     /** @var array Data declaration */
     private $dataDeclaration = [];
@@ -15,7 +15,7 @@ abstract class Object
     private $data = [];
 
     /**
-     * Object constructor.
+     * AbstractObject constructor.
      *
      * @param string[] $dataDeclaration Array of variables (example: ['reference': 'n..80', 'title' =>
      *                                  '[PRIVATE,COMPANY]'])
@@ -39,7 +39,7 @@ abstract class Object
         $vars = [];
 
         foreach ($this->data as $key => $value) {
-            if ($value instanceof Object) {
+            if ($value instanceof AbstractObject) {
                 $vars[$key] = $value->__set_state();
             } else {
                 $vars[$key] = $value;
@@ -60,7 +60,7 @@ abstract class Object
 
         foreach ($this->dataDeclaration as $key => $type) {
             if (array_key_exists($key, $this->data)) {
-                if ($this->data[$key] instanceof Object) {
+                if ($this->data[$key] instanceof AbstractObject) {
                     $vars[$key] = $this->data[$key]->__set_state();
                 } else {
                     $vars[$key] = $this->data[$key];
@@ -119,9 +119,9 @@ abstract class Object
      *
      * @param array $data
      *
-     * @return \ElGigi\SystemPay\Model\Object
+     * @return \ElGigi\SystemPay\AbstractObject
      */
-    public function setData(array $data): \ElGigi\SystemPay\Model\Object
+    public function setData(array $data): AbstractObject
     {
         foreach ($data as $name => $value) {
             $this->__set($name, $value);

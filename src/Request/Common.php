@@ -1,20 +1,23 @@
 <?php
-namespace ElGigi\SystemPay\model;
+
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class CommonRequest
+ * Request Common.
  *
- * @package SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $paymentSource  Payment source
  * @property string $submissionDate Submission date time
  * @property string $contractNumber Contract number
  * @property string $comment        Comment
  */
-class CommonRequest extends Object
+class Common extends AbstractObject
 {
     /**
-     * CommonRequest constructor.
+     * Common constructor.
      *
      * @param array $data Default data
      */

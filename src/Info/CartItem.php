@@ -1,11 +1,13 @@
 <?php
 
-namespace ElGigi\SystemPay\Model;
+namespace ElGigi\SystemPay\Info;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class CartItemInfo.
+ * Info CartItem.
  *
- * @package ElGigi\SystemPay\Model
+ * @package ElGigi\SystemPay\Info
  *
  * @property string $productLabel  Product label
  * @property string $productType   Product type
@@ -14,10 +16,10 @@ namespace ElGigi\SystemPay\Model;
  * @property string $productAmount Product amount
  * @property string $productVat    Product VAT
  */
-class CartItemInfo extends Object
+class CartItem extends AbstractObject
 {
     /**
-     * CartItemInfo constructor.
+     * CartItem constructor.
      *
      * @param array $data Default data
      */

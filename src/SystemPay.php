@@ -4,28 +4,103 @@ namespace ElGigi\SystemPay;
 
 use ElGigi\SystemPay\Exception\ResponseException;
 use ElGigi\SystemPay\Exception\SystemPayException;
-use ElGigi\SystemPay\Model\CardRequest;
-use ElGigi\SystemPay\Model\CommonRequest;
-use ElGigi\SystemPay\Model\CustomerRequest;
-use ElGigi\SystemPay\Model\Object;
-use ElGigi\SystemPay\Model\OrderRequest;
-use ElGigi\SystemPay\Model\PaymentRequest;
-use ElGigi\SystemPay\Model\QueryRequest;
-use ElGigi\SystemPay\Model\Response;
-use ElGigi\SystemPay\Model\ShoppingCartRequest;
-use ElGigi\SystemPay\Model\TechRequest;
-use ElGigi\SystemPay\Model\ThreeDSRequest;
+use ElGigi\SystemPay\Request\Card;
+use ElGigi\SystemPay\Request\Common;
+use ElGigi\SystemPay\Request\Customer;
+use ElGigi\SystemPay\Request\ExtendedResponse;
+use ElGigi\SystemPay\Request\Order;
+use ElGigi\SystemPay\Request\Payment;
+use ElGigi\SystemPay\Request\Query;
+use ElGigi\SystemPay\Request\Settlement;
+use ElGigi\SystemPay\Request\ShoppingCart;
+use ElGigi\SystemPay\Request\Subscription;
+use ElGigi\SystemPay\Request\Tech;
+use ElGigi\SystemPay\Request\ThreeDS;
 
 /**
  * Class SystemPay.
  *
  * @package ElGigi\SystemPay
- * @see     \SoapClient
+ *
+ * @method string createPayment(?ThreeDS $threeDSRequest, Payment $paymentRequest, Order $orderRequest, Card $cardRequest, ?Customer $customerRequest, ?Tech $techRequest, ?ShoppingCart $shoppingCartRequest)
+ * @method string updatePayment(Query $queryRequest, Payment $paymentRequest)
+ * @method string updatePaymentDetails(Query $queryRequest, ShoppingCart $shoppingCartRequest)
+ * @method string cancelPayment(Query $queryRequest)
+ * @method string findPayments(Query $queryRequest)
+ * @method string refundPayment(Payment $paymentRequest, Query $queryRequest)
+ * @method string duplicatePayment(Payment $paymentRequest, Query $queryRequest, Order $orderRequest)
+ * @method string validatePayment(Query $queryRequest)
+ * @method string capturePayment(Settlement $settlementRequest)
+ * @method string getPaymentDetails(Query $queryRequest, ?ExtendedResponse $extendedResponseRequest)
+ * @method string verifyThreeDSEnrollment(Payment $paymentRequest, Card $cardRequest, ?Tech $techRequest, ?ThreeDS $threeDSRequest)
+ * @method string checkThreeDSAuthentication(ThreeDS $threeDSRequest)
+ *
+ * @method string createToken(Card $cardRequest, Customer $customerRequest)
+ * @method string createTokenFromTransaction(Query $queryRequest, ?Card $cardRequest)
+ * @method string updateToken(Query $queryRequest, ?Card $cardRequest, ?Customer $customerRequest)
+ * @method string getTokenDetails(Query $queryRequest)
+ * @method string cancelToken(Query $queryRequest)
+ * @method string reactivateToken(Query $queryRequest)
+ * @method string createSubscription(Order $orderRequest, Subscription $subscriptionRequest, Card $cardRequest)
+ * @method string updateSubscription(Query $queryRequest, Subscription $subscriptionRequest, ?Payment $paymentRequest)
+ * @method string getSubscriptionDetails(Query $queryRequest)
+ * @method string cancelSubscription(Query $queryRequest)
  */
-class SystemPay extends \SoapClient
+class SystemPay
 {
     const SOAP_WSDL = 'https://paiement.systempay.fr/vads-ws/v5?wsdl';
     const SOAP_HEADERS_NAMESPACE = 'http://v5.ws.vads.lyra.com/Header/';
+    // Modes
+    const MODE_TEST = 'TEST';
+    const MODE_PRODUCTION = 'PRODUCTION';
+    // Methods
+    const METHODS = [// Classic payments
+                     'createPayment'              => ['?threeDSRequest'      => ThreeDS::class,
+                                                      'paymentRequest'       => Payment::class,
+                                                      'orderRequest'         => Order::class,
+                                                      'cardRequest'          => Card::class,
+                                                      '?customerRequest'     => Customer::class,
+                                                      '?techRequest'         => Tech::class,
+                                                      '?shoppingCartRequest' => ShoppingCart::class],
+                     'updatePayment'              => ['queryRequest'   => Query::class,
+                                                      'paymentRequest' => Payment::class],
+                     'updatePaymentDetails'       => ['queryRequest'        => Query::class,
+                                                      'shoppingCartRequest' => ShoppingCart::class],
+                     'cancelPayment'              => ['queryRequest' => Query::class],
+                     'findPayments'               => ['queryRequest' => Query::class],
+                     'refundPayment'              => ['paymentRequest' => Payment::class,
+                                                      'queryRequest'   => Query::class],
+                     'duplicatePayment'           => ['paymentRequest' => Payment::class,
+                                                      'queryRequest'   => Query::class,
+                                                      'orderRequest'   => Order::class],
+                     'validatePayment'            => ['queryRequest' => Query::class],
+                     'capturePayment'             => ['settlementRequest' => Settlement::class],
+                     'getPaymentDetails'          => ['queryRequest'             => Query::class,
+                                                      '?extendedResponseRequest' => ExtendedResponse::class],
+                     'verifyThreeDSEnrollment'    => ['paymentRequest'  => Payment::class,
+                                                      'cardRequest'     => Card::class,
+                                                      '?techRequest'    => Tech::class,
+                                                      '?threeDSRequest' => ThreeDS::class],
+                     'checkThreeDSAuthentication' => ['threeDSRequest' => ThreeDS::class],
+                     // Tokens
+                     'createToken'                => ['cardRequest'     => Card::class,
+                                                      'customerRequest' => Customer::class],
+                     'createTokenFromTransaction' => ['queryRequest' => Query::class,
+                                                      '?cardRequest' => Card::class],
+                     'updateToken'                => ['queryRequest'     => Query::class,
+                                                      '?cardRequest'     => Card::class,
+                                                      '?customerRequest' => Customer::class],
+                     'getTokenDetails'            => ['queryRequest' => Query::class],
+                     'cancelToken'                => ['queryRequest' => Query::class],
+                     'reactivateToken'            => ['queryRequest' => Query::class],
+                     'createSubscription'         => ['orderRequest'        => Order::class,
+                                                      'subscriptionRequest' => Subscription::class,
+                                                      'cardRequest'         => Card::class],
+                     'updateSubscription'         => ['queryRequest'        => Query::class,
+                                                      'subscriptionRequest' => Subscription::class,
+                                                      '?paymentRequest'     => Payment::class],
+                     'getSubscriptionDetails'     => ['queryRequest' => Query::class],
+                     'cancelSubscription'         => ['queryRequest' => Query::class]];
     /** @var \SoapClient SOAP Client */
     private $soapClient;
     /** @var string Shop id */
@@ -38,7 +113,7 @@ class SystemPay extends \SoapClient
     private $soapSessionId;
     /** @var string|null Log filename */
     private $logFile;
-    /** @var CommonRequest */
+    /** @var Common */
     private $commonRequest;
     /** @var mixed Last result */
     private $lastResult;
@@ -51,7 +126,7 @@ class SystemPay extends \SoapClient
      * @param string $mode           Transaction type (TEST or PRODUCTION)
      * @param array  $contextOptions Context options
      */
-    public function __construct(string $shopId, string $certificate, string $mode = 'TEST', array $contextOptions = [])
+    public function __construct(string $shopId, string $certificate, string $mode = SystemPay::MODE_TEST, array $contextOptions = [])
     {
         // Init variables
         $this->shopId = $shopId;
@@ -163,14 +238,14 @@ class SystemPay extends \SoapClient
      *
      * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    public function soapRequest(string $function_name, array $args)
+    private function soapRequest(string $function_name, array $args)
     {
         try {
             // Prepare args
             $args = array_merge(['commonRequest' => $this->getCommonRequest()], $args);
             array_walk_recursive($args,
                 function (&$value) {
-                    if ($value instanceof Object) {
+                    if ($value instanceof AbstractObject) {
                         $value = $value->__set_state();
                     } else {
                         $value = (string) $value;
@@ -266,11 +341,11 @@ class SystemPay extends \SoapClient
     /**
      * Set common request.
      *
-     * @param \ElGigi\SystemPay\Model\CommonRequest $commonRequest
+     * @param \ElGigi\SystemPay\Request\Common $commonRequest
      *
      * @return \ElGigi\SystemPay\SystemPay
      */
-    public function setCommonRequest(CommonRequest $commonRequest): SystemPay
+    public function setCommonRequest(Common $commonRequest): SystemPay
     {
         $this->commonRequest = $commonRequest;
 
@@ -280,12 +355,12 @@ class SystemPay extends \SoapClient
     /**
      * Get common request.
      *
-     * @return \ElGigi\SystemPay\Model\CommonRequest
+     * @return \ElGigi\SystemPay\Request\Common
      */
-    public function getCommonRequest(): CommonRequest
+    public function getCommonRequest(): Common
     {
         if (is_null($this->commonRequest)) {
-            $this->commonRequest = new CommonRequest;
+            $this->commonRequest = new Common;
         }
         $this->commonRequest->submissionDate = $this->getDatetime();
 
@@ -317,123 +392,50 @@ class SystemPay extends \SoapClient
     }
 
     /**
-     * Create payment.
+     * __call() magic method.
      *
-     * @param \ElGigi\SystemPay\Model\ThreeDSRequest|null      $threeDSRequest
-     * @param \ElGigi\SystemPay\Model\PaymentRequest           $paymentRequest
-     * @param \ElGigi\SystemPay\Model\OrderRequest             $orderRequest
-     * @param \ElGigi\SystemPay\Model\CardRequest              $cardRequest
-     * @param \ElGigi\SystemPay\Model\CustomerRequest|null     $customerRequest
-     * @param \ElGigi\SystemPay\Model\TechRequest|null         $techRequest
-     * @param \ElGigi\SystemPay\Model\ShoppingCartRequest|null $shoppingCartRequest
+     * @param string $name
+     * @param array  $arguments
      *
-     * @return string[] Array describe status and transaction id
+     * @return mixed
      * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    public function createPayment(ThreeDSRequest $threeDSRequest = null,
-                                  PaymentRequest $paymentRequest,
-                                  OrderRequest $orderRequest,
-                                  CardRequest $cardRequest,
-                                  CustomerRequest $customerRequest = null,
-                                  TechRequest $techRequest = null,
-                                  ShoppingCartRequest $shoppingCartRequest = null): array
+    public function __call(string $name, array $arguments)
     {
-        $soapParams = [];
-        if (!is_null($threeDSRequest)) {
-            $soapParams['threeDSRequest'] = $threeDSRequest;
+        // Check if method exists
+        if (isset($definitions[$name])) {
+            // Check number of arguments types
+            if (($nbArgs = count(static::METHODS[$name])) == count($arguments)) {
+                $finalArguments = [];
+
+                // Check arguments
+                $iArg = 0;
+                foreach (static::METHODS[$name][$name] as $argumentName => $type) {
+                    $finalArguments = [];
+                    $required = substr($argumentName, 0, 1) != '?';
+
+                    if (!$required) {
+                        $argumentName = substr($argumentName, 1);
+                    }
+
+                    if (($required === false && is_null($arguments[$iArg])) || is_a($arguments[$iArg], $type, true)) {
+                        $finalArguments[$argumentName] = $arguments[$iArg];
+                    } else {
+                        throw new \InvalidArgumentException(sprintf('Argument "%s" of "%s::%s()" method need to be of type "%s"',
+                                                                    $argumentName, self::class, $name, $type));
+                    }
+                    $iArg++;
+                }
+
+                // Get result
+                $result = $this->soapRequest($name, $finalArguments);
+
+                return $result->commonResponse->transactionStatusLabel;
+            } else {
+                throw new SystemPayException(sprintf('Method "%s::%s()" needs %d arguments', self::class, $name, $nbArgs));
+            }
+        } else {
+            throw new SystemPayException(sprintf('Unknown "%s::%s()" method', self::class, $name));
         }
-        $soapParams['paymentRequest'] = $paymentRequest;
-        $soapParams['orderRequest'] = $orderRequest;
-        $soapParams['cardRequest'] = $cardRequest;
-        if (!is_null($customerRequest)) {
-            $soapParams['customerRequest'] = $customerRequest;
-        }
-        if (!is_null($techRequest)) {
-            $soapParams['techRequest'] = $techRequest;
-        }
-        if (!is_null($shoppingCartRequest)) {
-            $soapParams['shoppingCartRequest'] = $shoppingCartRequest;
-        }
-
-        // Do Soap request
-        $result = $this->soapRequest(__FUNCTION__, $soapParams);
-
-        return ['status'          => $result->commonResponse->transactionStatusLabel,
-                'transactionUuid' => $result->paymentResponse->transactionUuid];
-    }
-
-    /**
-     * Get payment details.
-     *
-     * @param \ElGigi\SystemPay\Model\QueryRequest $queryRequest
-     *
-     * @return array Array describe status, transaction id and full detail
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
-     */
-    public function getPaymentDetails(QueryRequest $queryRequest): array
-    {
-        // Do Soap request
-        $result = $this->soapRequest(__FUNCTION__,
-                                     ['queryRequest' => $queryRequest]);
-
-        return ['status'          => $result->commonResponse->transactionStatusLabel,
-                'transactionUuid' => $result->paymentResponse->transactionUuid,
-                'detail'          => $this->getLastResult()];
-    }
-
-    /**
-     * Refund a payment.
-     *
-     * @param \ElGigi\SystemPay\Model\PaymentRequest $paymentRequest
-     * @param \ElGigi\SystemPay\Model\QueryRequest   $queryRequest
-     *
-     * @return array
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
-     */
-    public function refundPayment(PaymentRequest $paymentRequest, QueryRequest $queryRequest): array
-    {
-        // Do Soap request
-        $result = $this->soapRequest(__FUNCTION__,
-                                     ['paymentRequest' => $paymentRequest,
-                                      'queryRequest'   => $queryRequest]);
-
-        return ['status'          => $result->commonResponse->transactionStatusLabel,
-                'transactionUuid' => $result->paymentResponse->transactionUuid];
-    }
-
-    /**
-     * Create token.
-     *
-     * @param \ElGigi\SystemPay\Model\CardRequest     $cardRequest
-     * @param \ElGigi\SystemPay\Model\CustomerRequest $customerRequest
-     *
-     * @return \ElGigi\SystemPay\Model\Response
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
-     */
-    public function createToken(CardRequest $cardRequest, CustomerRequest $customerRequest): Response
-    {
-        // Do Soap request
-        $result = $this->soapRequest(__FUNCTION__,
-                                     ['cardRequest'     => $cardRequest,
-                                      'customerRequest' => $customerRequest]);
-
-        return $result->commonResponse->paymentToken;
-    }
-
-    /**
-     * Cancel token.
-     *
-     * @param \ElGigi\SystemPay\Model\QueryRequest $queryRequest
-     *
-     * @return true
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
-     */
-    public function cancelToken(QueryRequest $queryRequest): bool
-    {
-        // Do Soap request
-        $this->soapRequest(__FUNCTION__,
-                           ['queryRequest' => $queryRequest]);
-
-        return true;
     }
 }

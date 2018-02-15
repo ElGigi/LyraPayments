@@ -1,21 +1,23 @@
 <?php
 
-namespace ElGigi\SystemPay\Model;
+namespace ElGigi\SystemPay\Request;
+
+use ElGigi\SystemPay\AbstractObject;
 
 /**
- * Class PaymentRequest.
+ * Request Payment.
  *
- * @package ElGigi\SystemPay\Model
+ * @package ElGigi\SystemPay\Request
  *
  * @property string $amount              Payment amount
  * @property string $currency            Payment currency
  * @property string $expectedCaptureDate Payment expected capture date
  * @property string $manualValidation    Manual validation
  */
-class PaymentRequest extends Object
+class Payment extends AbstractObject
 {
     /**
-     * PaymentRequest constructor.
+     * Payment constructor.
      *
      * @param array $data Default data
      */
