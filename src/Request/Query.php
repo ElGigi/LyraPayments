@@ -26,6 +26,8 @@ class Query extends AbstractObject
      * Query constructor.
      *
      * @param array $data Default data
+     *
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function __construct(array $data = [])
     {

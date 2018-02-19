@@ -27,6 +27,8 @@ class Customer extends AbstractObject
      * Card constructor.
      *
      * @param array $data Default data
+     *
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function __construct(array $data = [])
     {

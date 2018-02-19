@@ -28,6 +28,8 @@ class Common extends AbstractObject
      * Common constructor.
      *
      * @param array $data Default data
+     *
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function __construct(array $data = [])
     {
