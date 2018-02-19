@@ -31,6 +31,12 @@ Each implemented method return detail of result ; you are able to call too `Syst
 
 For more detail on functionality of each method and theirs details results, report you to the web services documentation.
 
+### Backward compatibility of SystemPay
+
+```php
+array|null getPaymentUuid(LegacyTransactionKey $legacyTransactionKeyRequest)
+```
+
 ### Routine transactions on payments
 
 ```php
@@ -76,12 +82,12 @@ Models available to use payment methods:
 - `Request\Customer`
 - `Request\ExtendedResponse`
 - `Request\ExtraDetails`
+- `Request\LegacyTransactionKey`
 - `Request\Order`
 - `Request\Payment`
 - `Request\Query`
 - `Request\Settlement`
 - `Request\ShippingDetails`
-- `Request\ShoppingDetails`
 - `Request\ShoppingCart`
 - `Request\Subscription`
 - `Request\Tech`

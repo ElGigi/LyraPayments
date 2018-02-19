@@ -16,6 +16,7 @@ use ElGigi\SystemPay\Request\Card;
 use ElGigi\SystemPay\Request\Common;
 use ElGigi\SystemPay\Request\Customer;
 use ElGigi\SystemPay\Request\ExtendedResponse;
+use ElGigi\SystemPay\Request\LegacyTransactionKey;
 use ElGigi\SystemPay\Request\Order;
 use ElGigi\SystemPay\Request\Payment;
 use ElGigi\SystemPay\Request\Query;
@@ -29,6 +30,8 @@ use ElGigi\SystemPay\Request\ThreeDS;
  * Class SystemPay.
  *
  * @package ElGigi\SystemPay
+ *
+ * @method array|null getPaymentUuid(LegacyTransactionKey $legacyTransactionKeyRequest)
  *
  * @method array|null createPayment(ThreeDS | null $threeDSRequest, Payment $paymentRequest, Order $orderRequest, Card $cardRequest, Customer | null $customerRequest, Tech | null $techRequest, ShoppingCart | null $shoppingCartRequest)
  * @method array|null updatePayment(Query $queryRequest, Payment $paymentRequest)
@@ -62,7 +65,9 @@ class SystemPay
     const MODE_TEST = 'TEST';
     const MODE_PRODUCTION = 'PRODUCTION';
     // Methods
-    const METHODS = [// Classic payments
+    const METHODS = [// Backward compatibility
+                     'getPaymentUuid'             => ['legacyTransactionKeyRequest' => LegacyTransactionKey::class],
+                     // Classic payments
                      'createPayment'              => ['?threeDSRequest'      => ThreeDS::class,
                                                       'paymentRequest'       => Payment::class,
                                                       'orderRequest'         => Order::class,
@@ -364,6 +369,7 @@ class SystemPay
      * Get common request.
      *
      * @return \ElGigi\SystemPay\Request\Common
+     * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function getCommonRequest(): Common
     {
