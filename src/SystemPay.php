@@ -114,6 +114,7 @@ class SystemPay
                                                       '?paymentRequest'     => Payment::class],
                      'getSubscriptionDetails'     => ['queryRequest' => Query::class],
                      'cancelSubscription'         => ['queryRequest' => Query::class]];
+    const METHODS_RESULT = ['getPaymentUuid' => 'legacyTransactionKeyResult'];
     /** @var \SoapClient SOAP Client */
     private $soapClient;
     /** @var string Shop id */
@@ -244,14 +245,14 @@ class SystemPay
     /**
      * Soap request.
      *
-     * @param string $function_name Function name
-     * @param array  $args          Arguments
+     * @param string $functionName Function name
+     * @param array  $args         Arguments
      *
      * @return mixed
      *
      * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
-    private function soapRequest(string $function_name, array $args)
+    private function soapRequest(string $functionName, array $args)
     {
         try {
             // Prepare args
@@ -267,13 +268,20 @@ class SystemPay
 
             // Soap request
             $this->soapClient->__setSoapHeaders($this->getHeaders());
-            $result = call_user_func([$this->soapClient, $function_name], $args);
+            $result = call_user_func([$this->soapClient, $functionName], $args);
+
+            // Property name
+            if (isset(self::METHODS_RESULT[$functionName])) {
+                $resultPropertyName = self::METHODS_RESULT[$functionName];
+            } else {
+                $resultPropertyName = sprintf('%sResult', $functionName);
+            }
 
             // Check response error
-            if (!property_exists($result, $function_name . 'Result')) {
+            if (!property_exists($result, $resultPropertyName)) {
                 throw new SystemPayException('Bad format of result', 0);
             } else {
-                $this->lastResult = $result->{$function_name . 'Result'};
+                $this->lastResult = $result->{$resultPropertyName};
 
                 if (!property_exists($this->lastResult, 'commonResponse')) {
                     throw new SystemPayException('Bad format of response', 0);
