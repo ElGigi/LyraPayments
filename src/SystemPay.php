@@ -419,7 +419,6 @@ class SystemPay
                 // Check arguments
                 $iArg = 0;
                 foreach (static::METHODS[$name] as $argumentName => $type) {
-                    $finalArguments = [];
                     $required = substr($argumentName, 0, 1) != '?';
 
                     if (!$required) {
