@@ -386,8 +386,8 @@ class SystemPay
             $resultArray = [];
 
             foreach (json_decode(json_encode($this->lastResult), true) as $key => $value) {
-                if (substr($value, -8) == 'Response') {
-                    $resultArray[substr($value, 0, -8)] = $value;
+                if (substr($key, -8) == 'Response') {
+                    $resultArray[substr($key, 0, -8)] = $value;
                 } else {
                     $resultArray[$key] = $value;
                 }
