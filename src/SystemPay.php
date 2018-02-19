@@ -30,29 +30,29 @@ use ElGigi\SystemPay\Request\ThreeDS;
  *
  * @package ElGigi\SystemPay
  *
- * @method string createPayment(ThreeDS | null $threeDSRequest, Payment $paymentRequest, Order $orderRequest, Card $cardRequest, Customer | null $customerRequest, Tech | null $techRequest, ShoppingCart | null $shoppingCartRequest)
- * @method string updatePayment(Query $queryRequest, Payment $paymentRequest)
- * @method string updatePaymentDetails(Query $queryRequest, ShoppingCart $shoppingCartRequest)
- * @method string cancelPayment(Query $queryRequest)
- * @method string findPayments(Query $queryRequest)
- * @method string refundPayment(Payment $paymentRequest, Query $queryRequest)
- * @method string duplicatePayment(Payment $paymentRequest, Query $queryRequest, Order $orderRequest)
- * @method string validatePayment(Query $queryRequest)
- * @method string capturePayment(Settlement $settlementRequest)
- * @method string getPaymentDetails(Query $queryRequest, ExtendedResponse | null $extendedResponseRequest)
- * @method string verifyThreeDSEnrollment(Payment $paymentRequest, Card $cardRequest, Tech | null $techRequest, ThreeDS | null $threeDSRequest)
- * @method string checkThreeDSAuthentication(ThreeDS $threeDSRequest)
+ * @method array|null createPayment(ThreeDS | null $threeDSRequest, Payment $paymentRequest, Order $orderRequest, Card $cardRequest, Customer | null $customerRequest, Tech | null $techRequest, ShoppingCart | null $shoppingCartRequest)
+ * @method array|null updatePayment(Query $queryRequest, Payment $paymentRequest)
+ * @method array|null updatePaymentDetails(Query $queryRequest, ShoppingCart $shoppingCartRequest)
+ * @method array|null cancelPayment(Query $queryRequest)
+ * @method array|null findPayments(Query $queryRequest)
+ * @method array|null refundPayment(Payment $paymentRequest, Query $queryRequest)
+ * @method array|null duplicatePayment(Payment $paymentRequest, Query $queryRequest, Order $orderRequest)
+ * @method array|null validatePayment(Query $queryRequest)
+ * @method array|null capturePayment(Settlement $settlementRequest)
+ * @method array|null getPaymentDetails(Query $queryRequest, ExtendedResponse | null $extendedResponseRequest)
+ * @method array|null verifyThreeDSEnrollment(Payment $paymentRequest, Card $cardRequest, Tech | null $techRequest, ThreeDS | null $threeDSRequest)
+ * @method array|null checkThreeDSAuthentication(ThreeDS $threeDSRequest)
  *
- * @method string createToken(Card $cardRequest, Customer $customerRequest)
- * @method string createTokenFromTransaction(Query $queryRequest, Card | null $cardRequest)
- * @method string updateToken(Query $queryRequest, Card | null $cardRequest, Customer | null $customerRequest)
- * @method string getTokenDetails(Query $queryRequest)
- * @method string cancelToken(Query $queryRequest)
- * @method string reactivateToken(Query $queryRequest)
- * @method string createSubscription(Order $orderRequest, Subscription $subscriptionRequest, Card $cardRequest)
- * @method string updateSubscription(Query $queryRequest, Subscription $subscriptionRequest, Payment | null $paymentRequest)
- * @method string getSubscriptionDetails(Query $queryRequest)
- * @method string cancelSubscription(Query $queryRequest)
+ * @method array|null createToken(Card $cardRequest, Customer $customerRequest)
+ * @method array|null createTokenFromTransaction(Query $queryRequest, Card | null $cardRequest)
+ * @method array|null updateToken(Query $queryRequest, Card | null $cardRequest, Customer | null $customerRequest)
+ * @method array|null getTokenDetails(Query $queryRequest)
+ * @method array|null cancelToken(Query $queryRequest)
+ * @method array|null reactivateToken(Query $queryRequest)
+ * @method array|null createSubscription(Order $orderRequest, Subscription $subscriptionRequest, Card $cardRequest)
+ * @method array|null updateSubscription(Query $queryRequest, Subscription $subscriptionRequest, Payment | null $paymentRequest)
+ * @method array|null getSubscriptionDetails(Query $queryRequest)
+ * @method array|null cancelSubscription(Query $queryRequest)
  */
 class SystemPay
 {
@@ -405,7 +405,7 @@ class SystemPay
      * @param string $name
      * @param array  $arguments
      *
-     * @return mixed
+     * @return array|null
      * @throws \ElGigi\SystemPay\Exception\SystemPayException
      */
     public function __call(string $name, array $arguments)
@@ -435,9 +435,9 @@ class SystemPay
                 }
 
                 // Get result
-                $result = $this->soapRequest($name, $finalArguments);
+                $this->soapRequest($name, $finalArguments);
 
-                return $result->commonResponse->transactionStatusLabel;
+                return $this->getLastResult();
             } else {
                 throw new SystemPayException(sprintf('Method "%s::%s()" needs %d arguments', self::class, $name, $nbArgs));
             }
