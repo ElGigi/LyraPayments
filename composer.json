@@ -1,7 +1,7 @@
 {
   "name": "elgigi/lyra-payments",
   "description": "Lyra payments Webservices v5 PHP Client (SytemPay, Payzen, Sogecommerce, Crédit du Nord, ...)",
-  "keyswords": [
+  "keywords": [
     "lyra",
     "lyra network",
     "webservices",
