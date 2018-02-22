@@ -8,17 +8,17 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay\Request;
+namespace ElGigi\LyraPayments\Request;
 
-use ElGigi\SystemPay\AbstractObject;
+use ElGigi\LyraPayments\AbstractObject;
 
 /**
  * Request Order.
  *
- * @package ElGigi\SystemPay\Request
+ * @package ElGigi\LyraPayments\Request
  *
- * @property string                     $orderId Order id
- * @property \ElGigi\SystemPay\Info\Ext $extInfo Variable
+ * @property string                        $orderId Order id
+ * @property \ElGigi\LyraPayments\Info\Ext $extInfo Variable
  */
 class Order extends AbstractObject
 {
@@ -27,12 +27,12 @@ class Order extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
         parent::__construct(['orderId' => 'an..64',
-                             'extInfo' => 'ElGigi\SystemPay\Info\Ext'],
+                             'extInfo' => 'ElGigi\LyraPayments\Info\Ext'],
                             $data);
     }
 }

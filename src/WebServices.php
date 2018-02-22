@@ -8,28 +8,28 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay;
+namespace ElGigi\LyraPayments;
 
-use ElGigi\SystemPay\Exception\ResponseException;
-use ElGigi\SystemPay\Exception\SystemPayException;
-use ElGigi\SystemPay\Request\Card;
-use ElGigi\SystemPay\Request\Common;
-use ElGigi\SystemPay\Request\Customer;
-use ElGigi\SystemPay\Request\ExtendedResponse;
-use ElGigi\SystemPay\Request\LegacyTransactionKey;
-use ElGigi\SystemPay\Request\Order;
-use ElGigi\SystemPay\Request\Payment;
-use ElGigi\SystemPay\Request\Query;
-use ElGigi\SystemPay\Request\Settlement;
-use ElGigi\SystemPay\Request\ShoppingCart;
-use ElGigi\SystemPay\Request\Subscription;
-use ElGigi\SystemPay\Request\Tech;
-use ElGigi\SystemPay\Request\ThreeDS;
+use ElGigi\LyraPayments\Exception\ResponseException;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
+use ElGigi\LyraPayments\Request\Card;
+use ElGigi\LyraPayments\Request\Common;
+use ElGigi\LyraPayments\Request\Customer;
+use ElGigi\LyraPayments\Request\ExtendedResponse;
+use ElGigi\LyraPayments\Request\LegacyTransactionKey;
+use ElGigi\LyraPayments\Request\Order;
+use ElGigi\LyraPayments\Request\Payment;
+use ElGigi\LyraPayments\Request\Query;
+use ElGigi\LyraPayments\Request\Settlement;
+use ElGigi\LyraPayments\Request\ShoppingCart;
+use ElGigi\LyraPayments\Request\Subscription;
+use ElGigi\LyraPayments\Request\Tech;
+use ElGigi\LyraPayments\Request\ThreeDS;
 
 /**
- * Class SystemPay.
+ * Class WebServices.
  *
- * @package ElGigi\SystemPay
+ * @package ElGigi\LyraPayments
  *
  * @method array|null getPaymentUuid(LegacyTransactionKey $legacyTransactionKeyRequest)
  *
@@ -57,9 +57,8 @@ use ElGigi\SystemPay\Request\ThreeDS;
  * @method array|null getSubscriptionDetails(Query $queryRequest)
  * @method array|null cancelSubscription(Query $queryRequest)
  */
-class SystemPay
+class WebServices
 {
-    const SOAP_WSDL = 'https://paiement.systempay.fr/vads-ws/v5?wsdl';
     const SOAP_HEADERS_NAMESPACE = 'http://v5.ws.vads.lyra.com/Header/';
     // Modes
     const MODE_TEST = 'TEST';
@@ -133,14 +132,19 @@ class SystemPay
     private $lastResult;
 
     /**
-     * SystemPay constructor.
+     * WebServices constructor.
      *
+     * @param string $wsdl           WSDL file link
      * @param string $shopId         Shop id
      * @param string $certificate    Shop certificate
      * @param string $mode           Transaction type (TEST or PRODUCTION)
      * @param array  $contextOptions Context options
      */
-    public function __construct(string $shopId, string $certificate, string $mode = SystemPay::MODE_TEST, array $contextOptions = [])
+    public function __construct(string $wsdl,
+                                string $shopId,
+                                string $certificate,
+                                string $mode = WebServices::MODE_TEST,
+                                array $contextOptions = [])
     {
         // Init variables
         $this->shopId = $shopId;
@@ -148,7 +152,7 @@ class SystemPay
         $this->mode = $mode;
 
         // Context options
-        $contextOptions = array_replace_recursive(['ssl' => ['peer_name'        => 'paiement.systempay.fr',
+        $contextOptions = array_replace_recursive(['ssl' => ['peer_name'        => parse_url($wsdl, PHP_URL_HOST) ?? null,
                                                              'verify_peer'      => true,
                                                              'verify_peer_name' => true,
                                                              'cafile'           => __DIR__ . '/cacert.pem',
@@ -156,7 +160,7 @@ class SystemPay
                                                   $contextOptions);
 
         // Init SOAP client
-        $this->soapClient = new \SoapClient(self::SOAP_WSDL,
+        $this->soapClient = new \SoapClient($wsdl,
                                             ['trace'          => true,
                                              'exceptions'     => true,
                                              'encoding'       => 'UTF-8',
@@ -223,9 +227,9 @@ class SystemPay
      *
      * @param string $logFile Log filename
      *
-     * @return \ElGigi\SystemPay\SystemPay
+     * @return \ElGigi\LyraPayments\WebServices
      */
-    public function setLogFile(string $logFile): SystemPay
+    public function setLogFile(string $logFile): WebServices
     {
         $this->logFile = $logFile;
 
@@ -250,7 +254,7 @@ class SystemPay
      *
      * @return mixed
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     private function soapRequest(string $functionName, array $args)
     {
@@ -279,12 +283,12 @@ class SystemPay
 
             // Check response error
             if (!property_exists($result, $resultPropertyName)) {
-                throw new SystemPayException('Bad format of result', 0);
+                throw new LyraPaymentsException('Bad format of result', 0);
             } else {
                 $this->lastResult = $result->{$resultPropertyName};
 
                 if (!property_exists($this->lastResult, 'commonResponse')) {
-                    throw new SystemPayException('Bad format of response', 0);
+                    throw new LyraPaymentsException('Bad format of response', 0);
                 } else {
                     if (isset($this->lastResult->commonResponse->responseCode) && $this->lastResult->commonResponse->responseCode != 0) {
                         throw new ResponseException($this->lastResult->commonResponse->responseCodeDetail, $this->lastResult->commonResponse->responseCode);
@@ -293,8 +297,8 @@ class SystemPay
             }
         } catch (\SoapFault $e) {
             $this->lastResult = null;
-            throw new SystemPayException($e->getMessage(), $e->getCode(), $e);
-        } catch (SystemPayException $e) {
+            throw new LyraPaymentsException($e->getMessage(), $e->getCode(), $e);
+        } catch (LyraPaymentsException $e) {
             $this->lastResult = null;
             throw $e;
         } finally {
@@ -362,11 +366,11 @@ class SystemPay
     /**
      * Set common request.
      *
-     * @param \ElGigi\SystemPay\Request\Common $commonRequest
+     * @param \ElGigi\LyraPayments\Request\Common $commonRequest
      *
-     * @return \ElGigi\SystemPay\SystemPay
+     * @return \ElGigi\LyraPayments\WebServices
      */
-    public function setCommonRequest(Common $commonRequest): SystemPay
+    public function setCommonRequest(Common $commonRequest): WebServices
     {
         $this->commonRequest = $commonRequest;
 
@@ -376,8 +380,8 @@ class SystemPay
     /**
      * Get common request.
      *
-     * @return \ElGigi\SystemPay\Request\Common
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @return \ElGigi\LyraPayments\Request\Common
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function getCommonRequest(): Common
     {
@@ -420,7 +424,7 @@ class SystemPay
      * @param array  $arguments
      *
      * @return array|null
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __call(string $name, array $arguments)
     {
@@ -443,7 +447,7 @@ class SystemPay
                         $finalArguments[$argumentName] = $arguments[$iArg];
                     } else {
                         throw new \InvalidArgumentException(sprintf('Argument "%s" of "%s::%s()" method need to be of type "%s"',
-                                                                    $argumentName, self::class, $name, $type));
+                                                                    $argumentName, static::class, $name, $type));
                     }
                     $iArg++;
                 }
@@ -453,10 +457,10 @@ class SystemPay
 
                 return $this->getLastResult();
             } else {
-                throw new SystemPayException(sprintf('Method "%s::%s()" needs %d arguments', self::class, $name, $nbArgs));
+                throw new LyraPaymentsException(sprintf('Method "%s::%s()" needs %d arguments', static::class, $name, $nbArgs));
             }
         } else {
-            throw new SystemPayException(sprintf('Unknown "%s::%s()" method', self::class, $name));
+            throw new LyraPaymentsException(sprintf('Unknown "%s::%s()" method', static::class, $name));
         }
     }
 }

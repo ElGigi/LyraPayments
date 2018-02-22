@@ -8,14 +8,14 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay\Info;
+namespace ElGigi\LyraPayments\Info;
 
-use ElGigi\SystemPay\AbstractObject;
+use ElGigi\LyraPayments\AbstractObject;
 
 /**
  * Info CartItem.
  *
- * @package ElGigi\SystemPay\Info
+ * @package ElGigi\LyraPayments\Info
  *
  * @property string $productLabel  Product label
  * @property string $productType   Product type
@@ -31,7 +31,7 @@ class CartItem extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __construct(array $data = [])
     {

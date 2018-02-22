@@ -8,14 +8,14 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay\Request;
+namespace ElGigi\LyraPayments\Request;
 
-use ElGigi\SystemPay\AbstractObject;
+use ElGigi\LyraPayments\AbstractObject;
 
 /**
  * Request ExtraDetails.
  *
- * @package ElGigi\SystemPay\Request
+ * @package ElGigi\LyraPayments\Request
  *
  * @property string $ipAddress     IP address
  * @property string $fingerPrintId Unique session id
@@ -27,7 +27,7 @@ class ExtraDetails extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __construct(array $data = [])
     {

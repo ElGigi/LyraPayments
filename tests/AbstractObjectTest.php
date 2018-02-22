@@ -8,17 +8,17 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay\Tests;
+namespace ElGigi\LyraPayments\Tests;
 
-use ElGigi\SystemPay\AbstractObject;
-use ElGigi\SystemPay\Exception\SystemPayException;
+use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 use PHPUnit\Framework\TestCase;
 
 class AbstractObjectTest extends TestCase
 {
     public function testConstructorBadParameters()
     {
-        $this->expectException(SystemPayException::class);
+        $this->expectException(LyraPaymentsException::class);
 
         new class(
             ['test'  => 'string',
@@ -67,7 +67,7 @@ class AbstractObjectTest extends TestCase
 
     public function testSetNotValid()
     {
-        $this->expectException(SystemPayException::class);
+        $this->expectException(LyraPaymentsException::class);
 
         $object = $this->getValidAbstractObject();
 
@@ -87,7 +87,7 @@ class AbstractObjectTest extends TestCase
 
     public function testSetDataNotValid()
     {
-        $this->expectException(SystemPayException::class);
+        $this->expectException(LyraPaymentsException::class);
 
         $object = $this->getValidAbstractObject();
 
@@ -114,7 +114,7 @@ class AbstractObjectTest extends TestCase
         $this->assertEquals(true, AbstractObject::controlFormat('string', 'test'));
         $this->assertEquals(false, AbstractObject::controlFormat('string', 1));
         $this->assertEquals(false, AbstractObject::controlFormat('string', false));
-        // SystemPay
+        // WebServices
         $this->assertEquals(true, AbstractObject::controlFormat('a2', 'te'));
         $this->assertEquals(false, AbstractObject::controlFormat('a2', 'test'));
         $this->assertEquals(false, AbstractObject::controlFormat('a2', 't1'));

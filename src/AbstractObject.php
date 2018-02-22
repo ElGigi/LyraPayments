@@ -8,14 +8,14 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay;
+namespace ElGigi\LyraPayments;
 
-use ElGigi\SystemPay\Exception\SystemPayException;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Class AbstractObject.
  *
- * @package ElGigi\SystemPay
+ * @package ElGigi\LyraPayments
  */
 abstract class AbstractObject
 {
@@ -30,7 +30,7 @@ abstract class AbstractObject
      * @param string[] $dataDeclaration Array of variables (example: ['reference': 'n..80', 'title' => '[PRIVATE,COMPANY]'])
      * @param array    $data            Default data
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __construct(array $dataDeclaration, array $data = [])
     {
@@ -90,7 +90,7 @@ abstract class AbstractObject
      * @param string $name
      *
      * @return mixed
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __get(string $name)
     {
@@ -101,7 +101,7 @@ abstract class AbstractObject
                 return null;
             }
         } else {
-            throw new SystemPayException(sprintf('Undefined variable "%s" in class "%s"', $name, get_class($this)));
+            throw new LyraPaymentsException(sprintf('Undefined variable "%s" in class "%s"', $name, get_class($this)));
         }
     }
 
@@ -111,7 +111,7 @@ abstract class AbstractObject
      * @param string $name
      * @param mixed  $value
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __set(string $name, $value)
     {
@@ -119,11 +119,11 @@ abstract class AbstractObject
             if ($this::controlFormat($this->dataDeclaration[$name], $value)) {
                 $this->data[$name] = $value;
             } else {
-                throw new SystemPayException(sprintf('Bad format for property "%s" (%s) in class "%s", %s given.',
-                                                     $name, $this->dataDeclaration[$name], get_class($this), (is_object($value) ? get_class($value) : '"' . $value . '"')));
+                throw new LyraPaymentsException(sprintf('Bad format for property "%s" (%s) in class "%s", %s given.',
+                                                        $name, $this->dataDeclaration[$name], get_class($this), (is_object($value) ? get_class($value) : '"' . $value . '"')));
             }
         } else {
-            throw new SystemPayException(sprintf('Undefined property "%s" in class "%s", or readonly.', $name, get_class($this)));
+            throw new LyraPaymentsException(sprintf('Undefined property "%s" in class "%s", or readonly.', $name, get_class($this)));
         }
     }
 
@@ -133,7 +133,7 @@ abstract class AbstractObject
      * @param string $name
      *
      * @return mixed
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function get(string $name)
     {
@@ -145,8 +145,8 @@ abstract class AbstractObject
      *
      * @param array $data
      *
-     * @return \ElGigi\SystemPay\AbstractObject
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @return \ElGigi\LyraPayments\AbstractObject
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function setData(array $data): AbstractObject
     {

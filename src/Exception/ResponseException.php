@@ -8,14 +8,14 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay\Exception;
+namespace ElGigi\LyraPayments\Exception;
 
 /**
  * Exception ResponseException.
  *
- * @package ElGigi\SystemPay\Exception
+ * @package ElGigi\LyraPayments\Exception
  * @see     \Exception
  */
-class ResponseException extends SystemPayException
+class ResponseException extends LyraPaymentsException
 {
 }

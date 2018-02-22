@@ -8,14 +8,14 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay\Request;
+namespace ElGigi\LyraPayments\Request;
 
-use ElGigi\SystemPay\AbstractObject;
+use ElGigi\LyraPayments\AbstractObject;
 
 /**
  * Request Query.
  *
- * @package ElGigi\SystemPay\Request
+ * @package ElGigi\LyraPayments\Request
  *
  * @property string $uuid         Unique id transaction reference
  * @property string $paymentToken Credit card token
@@ -27,7 +27,7 @@ class Query extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __construct(array $data = [])
     {

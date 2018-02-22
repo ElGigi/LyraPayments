@@ -1,12 +1,21 @@
-# SystemPay WS v5 PHP Client
+# Lyra payments Webservices v5 PHP Client
 
-[![Latest Version](http://img.shields.io/packagist/v/elgigi/systempay.svg?style=flat-square)](https://github.com/ElGigi/SystemPay/releases)
+[![Latest Version](http://img.shields.io/packagist/v/elgigi/lyra-payments.svg?style=flat-square)](https://github.com/ElGigi/LyraPayments/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/scrutinizer/build/g/elgigi/systempay.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/systempay/build-status/master)
-[![Quality Score](https://img.shields.io/scrutinizer/g/elgigi/systempay.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/systempay)
-[![Total Downloads](https://img.shields.io/packagist/dt/elgigi/systempay.svg?style=flat-square)](https://packagist.org/packages/elgigi/systempay)
+[![Build Status](https://img.shields.io/scrutinizer/build/g/elgigi/lyra-payments.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/lyra-payments/build-status/master)
+[![Quality Score](https://img.shields.io/scrutinizer/g/elgigi/lyra-payments.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/lyra-payments)
+[![Total Downloads](https://img.shields.io/packagist/dt/elgigi/lyra-payments.svg?style=flat-square)](https://packagist.org/packages/elgigi/lyra-payments)
 
-PHP client to dialog with SystemPay web services of french Natixis banks.
+PHP client to dialog with Lyra Network web services v5, payment solution for:
+- **WebServices** of french Natixis banks
+- **Payzen** for all french banks, most european banks, Brazil, Chile, Argentina, Peru, Mexico, USA and Canada, India and soon Colombia.
+- **Sogecommerce** for the **Société Générale** french bank
+- The **Crédit du Nord** french bank group
+- The **OSB** bank to Tahiti
+- The **CSB** bank to Noumea
+- The **BNPP** bank in Africa
+- **FirstData** to Brazil
+- **Innocard** to Switzerland
 
 ## Installation
 
@@ -15,7 +24,7 @@ PHP client to dialog with SystemPay web services of french Natixis banks.
 You can install the client with [Composer](https://getcomposer.org/), it's the recommended installation.
 
 ```bash
-$ composer require elgigi/systempay
+$ composer require elgigi/lyra-payments
 ```
 
 ### Dependencies
@@ -25,13 +34,13 @@ $ composer require elgigi/systempay
 
 ## Methods
 
-All methods available in web services v5 of SystemPay are functional.
+All methods available in web services v5 of Lyra Network payment system are functional.
 
-Each implemented method return detail of result ; you are able to call too `SystemPay::getLastResult()` method after calling your method.
+Each implemented method return detail of result ; you are able to call too `WebServices::getLastResult()` method after calling your method.
 
 For more detail on functionality of each method and theirs details results, report you to the web services documentation.
 
-### Backward compatibility of SystemPay
+### Backward compatibility of WebServices
 
 ```php
 array|null getPaymentUuid(LegacyTransactionKey $legacyTransactionKeyRequest)

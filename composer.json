@@ -1,6 +1,23 @@
 {
-  "name": "elgigi/systempay",
-  "description": "SystemPay WS v5 PHP Client",
+  "name": "elgigi/lyra-payments",
+  "description": "Lyra payments Webservices v5 PHP Client (SytemPay, Payzen, Sogecommerce, Crédit du Nord, ...)",
+  "keyswords": [
+    "lyra",
+    "lyra network",
+    "webservices",
+    "payment",
+    "systempay",
+    "banque populaire",
+    "caisse d'épargne",
+    "payzen",
+    "sogecommerce",
+    "crédit du nord",
+    "osb",
+    "csb",
+    "bnpp",
+    "firstdata",
+    "innocard"
+  ],
   "minimum-stability": "stable",
   "license": "MIT",
   "homepage": "https://elgigi.fr",
@@ -12,12 +29,12 @@
   ],
   "autoload": {
     "psr-4": {
-      "ElGigi\\SystemPay\\": "src/"
+      "ElGigi\\LyraPayments\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "ElGigi\\SystemPay\\Tests\\": "tests/"
+      "ElGigi\\LyraPayments\\Tests\\": "tests/"
     }
   },
   "require": {

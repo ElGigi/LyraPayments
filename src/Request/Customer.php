@@ -8,18 +8,18 @@
  * file that was distributed with this source code, to the root.
  */
 
-namespace ElGigi\SystemPay\Request;
+namespace ElGigi\LyraPayments\Request;
 
-use ElGigi\SystemPay\AbstractObject;
+use ElGigi\LyraPayments\AbstractObject;
 
 /**
  * Request Customer.
  *
- * @package ElGigi\SystemPay\Request
+ * @package ElGigi\LyraPayments\Request
  *
- * @property \ElGigi\SystemPay\Request\BillingDetails  $billingDetails  Billing details
- * @property \ElGigi\SystemPay\Request\ShippingDetails $shippingDetails Shipping details
- * @property \ElGigi\SystemPay\Request\ExtraDetails    $extraDetails    Extra details
+ * @property \ElGigi\LyraPayments\Request\BillingDetails  $billingDetails  Billing details
+ * @property \ElGigi\LyraPayments\Request\ShippingDetails $shippingDetails Shipping details
+ * @property \ElGigi\LyraPayments\Request\ExtraDetails    $extraDetails    Extra details
  */
 class Customer extends AbstractObject
 {
@@ -28,13 +28,13 @@ class Customer extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\SystemPay\Exception\SystemPayException
+     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['billingDetails'  => 'ElGigi\SystemPay\Request\BillingDetails',
-                             'shippingDetails' => 'ElGigi\SystemPay\Request\ShippingDetails',
-                             'extraDetails'    => 'ElGigi\SystemPay\Request\ExtraDetails'],
+        parent::__construct(['billingDetails'  => 'ElGigi\LyraPayments\Request\BillingDetails',
+                             'shippingDetails' => 'ElGigi\LyraPayments\Request\ShippingDetails',
+                             'extraDetails'    => 'ElGigi\LyraPayments\Request\ExtraDetails'],
                             $data);
     }
 }
