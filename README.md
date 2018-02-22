@@ -2,8 +2,8 @@
 
 [![Latest Version](http://img.shields.io/packagist/v/elgigi/lyra-payments.svg?style=flat-square)](https://github.com/ElGigi/LyraPayments/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/scrutinizer/build/g/elgigi/lyra-payments.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/lyra-payments/build-status/master)
-[![Quality Score](https://img.shields.io/scrutinizer/g/elgigi/lyra-payments.svg?style=flat-square)](https://scrutinizer-ci.com/g/elgigi/lyra-payments)
+[![Build Status](https://img.shields.io/scrutinizer/build/g/ElGigi/LyraPayments.svg?style=flat-square)](https://scrutinizer-ci.com/g/ElGigi/LyraPayments/build-status/master)
+[![Quality Score](https://img.shields.io/scrutinizer/g/ElGigi/LyraPayments.svg?style=flat-square)](https://scrutinizer-ci.com/g/ElGigi/LyraPayments)
 [![Total Downloads](https://img.shields.io/packagist/dt/elgigi/lyra-payments.svg?style=flat-square)](https://packagist.org/packages/elgigi/lyra-payments)
 
 PHP client to dialog with Lyra Network web services v5, payment solution for:
