@@ -2,7 +2,7 @@
 
 [![Latest Version](http://img.shields.io/packagist/v/elgigi/lyra-payments.svg?style=flat-square)](https://github.com/ElGigi/LyraPayments/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/scrutinizer/build/g/ElGigi/LyraPayments.svg?style=flat-square)](https://scrutinizer-ci.com/g/ElGigi/LyraPayments/build-status/master)
+[![Build Status](https://img.shields.io/travis/com/ElGigi/LyraPayments?style=flat-square)](https://travis-ci.com/ElGigi/LyraPayments)
 [![Codacy Grade](https://img.shields.io/codacy/grade/a330af553b394da58c0e04b34331f6e2.svg?style=flat-square)](https://www.codacy.com/app/ElGigi/LyraPayments?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ElGigi/LyraPayments&amp;utm_campaign=Badge_Grade)
 [![Total Downloads](https://img.shields.io/packagist/dt/elgigi/lyra-payments.svg?style=flat-square)](https://packagist.org/packages/elgigi/lyra-payments)
 
