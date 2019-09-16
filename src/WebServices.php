@@ -134,18 +134,22 @@ class WebServices
     /**
      * WebServices constructor.
      *
-     * @param string $wsdl           WSDL file link
-     * @param string $shopId         Shop id
-     * @param string $certificate    Shop certificate
-     * @param string $mode           Transaction type (TEST or PRODUCTION)
-     * @param array  $contextOptions Context options
+     * @param string $wsdl WSDL file link
+     * @param string $shopId Shop id
+     * @param string $certificate Shop certificate
+     * @param string $mode Transaction type (TEST or PRODUCTION)
+     * @param array $contextOptions Context options
+     * @param array $soapClientOptions
+     * @throws \SoapFault
      */
-    public function __construct(string $wsdl,
-                                string $shopId,
-                                string $certificate,
-                                string $mode = WebServices::MODE_TEST,
-                                array $contextOptions = [])
-    {
+    public function __construct(
+        string $wsdl,
+        string $shopId,
+        string $certificate,
+        string $mode = WebServices::MODE_TEST,
+        array $contextOptions = [],
+        array $soapClientOptions = []
+    ) {
         // Init variables
         $this->shopId = $shopId;
         $this->certificate = $certificate;
@@ -160,11 +164,14 @@ class WebServices
                                                   $contextOptions);
 
         // Init SOAP client
-        $this->soapClient = new \SoapClient($wsdl,
-                                            ['trace'          => true,
-                                             'exceptions'     => true,
-                                             'encoding'       => 'UTF-8',
-                                             'stream_context' => stream_context_create($contextOptions)]);
+        $soapClientOptions = array_merge([
+            'trace' => true,
+            'exceptions' => true,
+            'encoding' => 'UTF-8',
+            'stream_context' => stream_context_create($contextOptions)
+        ], $soapClientOptions);
+        
+        $this->soapClient = new \SoapClient($wsdl, $soapClientOptions);
     }
 
     /**
