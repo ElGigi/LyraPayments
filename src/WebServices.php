@@ -314,7 +314,7 @@ class WebServices
 
             // Get and save session id
             $matches = [];
-            if (preg_match("#JSESSIONID=([a-z0-9.]+)#i", $this->soapClient->__getLastResponseHeaders(), $matches) == 1) {
+            if (preg_match("#JSESSIONID=([-a-z0-9.]+)#i", $this->soapClient->__getLastResponseHeaders(), $matches) == 1) {
                 if ($matches[1] != $this->soapSessionId) {
                     $this->soapSessionId = $matches[1];
                     $this->soapClient->__setCookie('JSESSIONID', $this->soapSessionId);
