@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request Settlement.
@@ -28,13 +29,17 @@ class Settlement extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['transactionUuids' => 'string',
-                             'commission'       => 'n2',
-                             'date'             => 'datetime'],
-                            $data);
+        parent::__construct(
+            [
+                'transactionUuids' => 'string',
+                'commission' => 'n2',
+                'date' => 'datetime'
+            ],
+            $data
+        );
     }
 }

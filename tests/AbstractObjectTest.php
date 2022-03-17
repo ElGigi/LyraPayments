@@ -21,14 +21,17 @@ class AbstractObjectTest extends TestCase
         $this->expectException(LyraPaymentsException::class);
 
         new class(
-            ['test'  => 'string',
-             'test2' => 'int',
-             'test3' => 'string'],
-            ['test'  => 'value1',
-             'test2' => 'value2',
-             'test3' => 'value3'])
-            extends AbstractObject
-        {
+            [
+                'test' => 'string',
+                'test2' => 'int',
+                'test3' => 'string'
+            ],
+            [
+                'test' => 'value1',
+                'test2' => 'value2',
+                'test3' => 'value3'
+            ])
+            extends AbstractObject {
         };
     }
 
@@ -36,14 +39,17 @@ class AbstractObjectTest extends TestCase
     {
         return
             new class(
-                ['test'  => 'string',
-                 'test2' => 'int',
-                 'test3' => 'string'],
-                ['test'  => 'value1',
-                 'test2' => 1234,
-                 'test3' => 'value3'])
-                extends AbstractObject
-            {
+                [
+                    'test' => 'string',
+                    'test2' => 'int',
+                    'test3' => 'string'
+                ],
+                [
+                    'test' => 'value1',
+                    'test2' => 1234,
+                    'test3' => 'value3'
+                ])
+                extends AbstractObject {
             };
     }
 
@@ -78,8 +84,10 @@ class AbstractObjectTest extends TestCase
     {
         $object = $this->getValidAbstractObject();
 
-        $object->setData(['test'  => 'valuetest',
-                          'test2' => 4321]);
+        $object->setData([
+            'test' => 'valuetest',
+            'test2' => 4321
+        ]);
 
         $this->assertEquals('valuetest', $object->get('test'));
         $this->assertEquals(4321, $object->get('test2'));

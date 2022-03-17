@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request Card.
@@ -32,17 +33,21 @@ class Card extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['paymentToken'       => 'ans..64',
-                             'number'             => 'string',
-                             'scheme'             => '[AMEX,CB,MASTERCARD,VISA,VISA_ELECTRON,MAESTRO,E-CARTEBLEUE,JCB]',
-                             'expiryMonth'        => 'n..2',
-                             'expiryYear'         => 'n4',
-                             'cardSecurityCode'   => 'n..4',
-                             'cardHolderBirthday' => 'datetime'],
-                            $data);
+        parent::__construct(
+            [
+                'paymentToken' => 'ans..64',
+                'number' => 'string',
+                'scheme' => '[AMEX,CB,MASTERCARD,VISA,VISA_ELECTRON,MAESTRO,E-CARTEBLEUE,JCB]',
+                'expiryMonth' => 'n..2',
+                'expiryYear' => 'n4',
+                'cardSecurityCode' => 'n..4',
+                'cardHolderBirthday' => 'datetime'
+            ],
+            $data
+        );
     }
 }

@@ -10,12 +10,14 @@
 
 namespace ElGigi\LyraPayments\Exception;
 
+use Exception;
+
 /**
  * Exception LyraPaymentsException.
  *
  * @package ElGigi\LyraPayments\Exception
  * @see     \Exception
  */
-class LyraPaymentsException extends \Exception
+class LyraPaymentsException extends Exception
 {
 }

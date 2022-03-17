@@ -8,11 +8,15 @@ use [Keep a Changelog] (http://keepachangelog.com/).
 
 ### Added
 
+- PHP 8.0 and PHP 8.1 support
 - Define SOAP Extension into composer requirements
+- Define JSON Extension into composer requirements
+- Define DOM Extension into composer suggests
 
 ### Changed
 
 - Method `AbstractObject::__set_state()` renamed to `AbstractObject::getArrayCopy()`
+- Code style
 
 ## [1.1.1] - 2022-03-17
 

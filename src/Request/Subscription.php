@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request Subscription.
@@ -33,18 +34,22 @@ class Subscription extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['effectDate'          => 'datetime',
-                             'amount'              => 'n..12',
-                             'currency'            => 'n3',
-                             'initialAmount'       => 'n..12',
-                             'initialAmountNumber' => 'int',
-                             'rrule'               => 'string',
-                             'subscriptionId'      => 'string',
-                             'description'         => 'string'],
-                            $data);
+        parent::__construct(
+            [
+                'effectDate' => 'datetime',
+                'amount' => 'n..12',
+                'currency' => 'n3',
+                'initialAmount' => 'n..12',
+                'initialAmountNumber' => 'int',
+                'rrule' => 'string',
+                'subscriptionId' => 'string',
+                'description' => 'string'
+            ],
+            $data
+        );
     }
 }

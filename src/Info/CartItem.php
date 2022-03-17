@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Info;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Info CartItem.
@@ -31,16 +32,20 @@ class CartItem extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['productLabel'  => 'string',
-                             'productType'   => '[FOOD_AND_GROCERY,AUTOMOTIVE,ENTERTAINMENT,HOME_AND_GARDEN,HOME_APPLIANCE,AUCTION_AND_GROUP_BUYING,FLOWERS_AND_GIFTS,COMPUTER_AND_SOFTWARE,HEALTH_AND_BEAUTY,SERVICE_FOR_INDIVIDUAL,SERVICE_FOR_BUSINESS,SPORTS,CLOTHING_AND_ACCESSORIES,TRAVEL,HOME_AUDIO_PHOTO_VIDEO,TELEPHONY]',
-                             'productRef'    => 'string',
-                             'productQty'    => 'int',
-                             'productAmount' => 'string',
-                             'productVat'    => 'string'],
-                            $data);
+        parent::__construct(
+            [
+                'productLabel' => 'string',
+                'productType' => '[FOOD_AND_GROCERY,AUTOMOTIVE,ENTERTAINMENT,HOME_AND_GARDEN,HOME_APPLIANCE,AUCTION_AND_GROUP_BUYING,FLOWERS_AND_GIFTS,COMPUTER_AND_SOFTWARE,HEALTH_AND_BEAUTY,SERVICE_FOR_INDIVIDUAL,SERVICE_FOR_BUSINESS,SPORTS,CLOTHING_AND_ACCESSORIES,TRAVEL,HOME_AUDIO_PHOTO_VIDEO,TELEPHONY]',
+                'productRef' => 'string',
+                'productQty' => 'int',
+                'productAmount' => 'string',
+                'productVat' => 'string'
+            ],
+            $data
+        );
     }
 }

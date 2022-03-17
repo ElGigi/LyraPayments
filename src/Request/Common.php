@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request Common.
@@ -29,14 +30,18 @@ class Common extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['paymentSource'  => '[EC,MOTO,CC,OTHER]',
-                             'submissionDate' => 'datetime',
-                             'contractNumber' => 'string',
-                             'comment'        => 'string'],
-                            $data);
+        parent::__construct(
+            [
+                'paymentSource' => '[EC,MOTO,CC,OTHER]',
+                'submissionDate' => 'datetime',
+                'contractNumber' => 'string',
+                'comment' => 'string'
+            ],
+            $data
+        );
     }
 }

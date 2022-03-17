@@ -11,15 +11,16 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request Customer.
  *
  * @package ElGigi\LyraPayments\Request
  *
- * @property \ElGigi\LyraPayments\Request\BillingDetails  $billingDetails  Billing details
- * @property \ElGigi\LyraPayments\Request\ShippingDetails $shippingDetails Shipping details
- * @property \ElGigi\LyraPayments\Request\ExtraDetails    $extraDetails    Extra details
+ * @property BillingDetails $billingDetails  Billing details
+ * @property ShippingDetails $shippingDetails Shipping details
+ * @property ExtraDetails $extraDetails    Extra details
  */
 class Customer extends AbstractObject
 {
@@ -28,13 +29,17 @@ class Customer extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['billingDetails'  => 'ElGigi\LyraPayments\Request\BillingDetails',
-                             'shippingDetails' => 'ElGigi\LyraPayments\Request\ShippingDetails',
-                             'extraDetails'    => 'ElGigi\LyraPayments\Request\ExtraDetails'],
-                            $data);
+        parent::__construct(
+            [
+                'billingDetails' => 'ElGigi\LyraPayments\Request\BillingDetails',
+                'shippingDetails' => 'ElGigi\LyraPayments\Request\ShippingDetails',
+                'extraDetails' => 'ElGigi\LyraPayments\Request\ExtraDetails'
+            ],
+            $data
+        );
     }
 }

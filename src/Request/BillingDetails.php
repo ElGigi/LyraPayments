@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request BillingDetails.
@@ -40,27 +41,31 @@ class BillingDetails extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['reference'       => 'n..80',
-                             'title'           => 'n..80',
-                             'type'            => '[PRIVATE,COMPANY]',
-                             'firstName'       => 'ans..128',
-                             'lastName'        => 'ans..128',
-                             'phoneNumber'     => 'ans..32',
-                             'email'           => 'ans..150',
-                             'streetNumber'    => 'an..5',
-                             'address'         => 'ans..255',
-                             'district'        => 'ans..127',
-                             'zipCode'         => 'ans..64',
-                             'city'            => 'ans..128',
-                             'state'           => 'ans..128',
-                             'country'         => 'a2',
-                             'language'        => 'a2',
-                             'cellPhoneNumber' => 'ans..32',
-                             'identityCode'    => 'ans..255'],
-                            $data);
+        parent::__construct(
+            [
+                'reference' => 'n..80',
+                'title' => 'n..80',
+                'type' => '[PRIVATE,COMPANY]',
+                'firstName' => 'ans..128',
+                'lastName' => 'ans..128',
+                'phoneNumber' => 'ans..32',
+                'email' => 'ans..150',
+                'streetNumber' => 'an..5',
+                'address' => 'ans..255',
+                'district' => 'ans..127',
+                'zipCode' => 'ans..64',
+                'city' => 'ans..128',
+                'state' => 'ans..128',
+                'country' => 'a2',
+                'language' => 'a2',
+                'cellPhoneNumber' => 'ans..32',
+                'identityCode' => 'ans..255'
+            ],
+            $data
+        );
     }
 }

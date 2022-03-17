@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request Payment.
@@ -29,14 +30,18 @@ class Payment extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['amount'              => 'n..12',
-                             'currency'            => 'n3',
-                             'expectedCaptureDate' => 'datetime',
-                             'manualValidation'    => 'n1'],
-                            $data);
+        parent::__construct(
+            [
+                'amount' => 'n..12',
+                'currency' => 'n3',
+                'expectedCaptureDate' => 'datetime',
+                'manualValidation' => 'n1'
+            ],
+            $data
+        );
     }
 }

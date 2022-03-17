@@ -10,8 +10,9 @@
 
 namespace ElGigi\LyraPayments;
 
-use ElGigi\LyraPayments\Exception\ResponseException;
+use DOMDocument;
 use ElGigi\LyraPayments\Exception\LyraPaymentsException;
+use ElGigi\LyraPayments\Exception\ResponseException;
 use ElGigi\LyraPayments\Request\Card;
 use ElGigi\LyraPayments\Request\Common;
 use ElGigi\LyraPayments\Request\Customer;
@@ -25,6 +26,11 @@ use ElGigi\LyraPayments\Request\ShoppingCart;
 use ElGigi\LyraPayments\Request\Subscription;
 use ElGigi\LyraPayments\Request\Tech;
 use ElGigi\LyraPayments\Request\ThreeDS;
+use InvalidArgumentException;
+use RuntimeException;
+use SoapClient;
+use SoapFault;
+use SoapHeader;
 
 /**
  * Class WebServices.
@@ -64,57 +70,83 @@ class WebServices
     const MODE_TEST = 'TEST';
     const MODE_PRODUCTION = 'PRODUCTION';
     // Methods
-    const METHODS = [// Backward compatibility
-                     'getPaymentUuid'             => ['legacyTransactionKeyRequest' => LegacyTransactionKey::class],
-                     // Classic payments
-                     'createPayment'              => ['?threeDSRequest'      => ThreeDS::class,
-                                                      'paymentRequest'       => Payment::class,
-                                                      'orderRequest'         => Order::class,
-                                                      'cardRequest'          => Card::class,
-                                                      '?customerRequest'     => Customer::class,
-                                                      '?techRequest'         => Tech::class,
-                                                      '?shoppingCartRequest' => ShoppingCart::class],
-                     'updatePayment'              => ['queryRequest'   => Query::class,
-                                                      'paymentRequest' => Payment::class],
-                     'updatePaymentDetails'       => ['queryRequest'        => Query::class,
-                                                      'shoppingCartRequest' => ShoppingCart::class],
-                     'cancelPayment'              => ['queryRequest' => Query::class],
-                     'findPayments'               => ['queryRequest' => Query::class],
-                     'refundPayment'              => ['paymentRequest' => Payment::class,
-                                                      'queryRequest'   => Query::class],
-                     'duplicatePayment'           => ['paymentRequest' => Payment::class,
-                                                      'queryRequest'   => Query::class,
-                                                      'orderRequest'   => Order::class],
-                     'validatePayment'            => ['queryRequest' => Query::class],
-                     'capturePayment'             => ['settlementRequest' => Settlement::class],
-                     'getPaymentDetails'          => ['queryRequest'             => Query::class,
-                                                      '?extendedResponseRequest' => ExtendedResponse::class],
-                     'verifyThreeDSEnrollment'    => ['paymentRequest'  => Payment::class,
-                                                      'cardRequest'     => Card::class,
-                                                      '?techRequest'    => Tech::class,
-                                                      '?threeDSRequest' => ThreeDS::class],
-                     'checkThreeDSAuthentication' => ['threeDSRequest' => ThreeDS::class],
-                     // Tokens
-                     'createToken'                => ['cardRequest'     => Card::class,
-                                                      'customerRequest' => Customer::class],
-                     'createTokenFromTransaction' => ['queryRequest' => Query::class,
-                                                      '?cardRequest' => Card::class],
-                     'updateToken'                => ['queryRequest'     => Query::class,
-                                                      '?cardRequest'     => Card::class,
-                                                      '?customerRequest' => Customer::class],
-                     'getTokenDetails'            => ['queryRequest' => Query::class],
-                     'cancelToken'                => ['queryRequest' => Query::class],
-                     'reactivateToken'            => ['queryRequest' => Query::class],
-                     'createSubscription'         => ['orderRequest'        => Order::class,
-                                                      'subscriptionRequest' => Subscription::class,
-                                                      'cardRequest'         => Card::class],
-                     'updateSubscription'         => ['queryRequest'        => Query::class,
-                                                      'subscriptionRequest' => Subscription::class,
-                                                      '?paymentRequest'     => Payment::class],
-                     'getSubscriptionDetails'     => ['queryRequest' => Query::class],
-                     'cancelSubscription'         => ['queryRequest' => Query::class]];
+    const METHODS = [
+        // Backward compatibility
+        'getPaymentUuid' => ['legacyTransactionKeyRequest' => LegacyTransactionKey::class],
+        // Classic payments
+        'createPayment' => [
+            '?threeDSRequest' => ThreeDS::class,
+            'paymentRequest' => Payment::class,
+            'orderRequest' => Order::class,
+            'cardRequest' => Card::class,
+            '?customerRequest' => Customer::class,
+            '?techRequest' => Tech::class,
+            '?shoppingCartRequest' => ShoppingCart::class
+        ],
+        'updatePayment' => [
+            'queryRequest' => Query::class,
+            'paymentRequest' => Payment::class
+        ],
+        'updatePaymentDetails' => [
+            'queryRequest' => Query::class,
+            'shoppingCartRequest' => ShoppingCart::class
+        ],
+        'cancelPayment' => ['queryRequest' => Query::class],
+        'findPayments' => ['queryRequest' => Query::class],
+        'refundPayment' => [
+            'paymentRequest' => Payment::class,
+            'queryRequest' => Query::class
+        ],
+        'duplicatePayment' => [
+            'paymentRequest' => Payment::class,
+            'queryRequest' => Query::class,
+            'orderRequest' => Order::class
+        ],
+        'validatePayment' => ['queryRequest' => Query::class],
+        'capturePayment' => ['settlementRequest' => Settlement::class],
+        'getPaymentDetails' => [
+            'queryRequest' => Query::class,
+            '?extendedResponseRequest' => ExtendedResponse::class
+        ],
+        'verifyThreeDSEnrollment' => [
+            'paymentRequest' => Payment::class,
+            'cardRequest' => Card::class,
+            '?techRequest' => Tech::class,
+            '?threeDSRequest' => ThreeDS::class
+        ],
+        'checkThreeDSAuthentication' => ['threeDSRequest' => ThreeDS::class],
+        // Tokens
+        'createToken' => [
+            'cardRequest' => Card::class,
+            'customerRequest' => Customer::class
+        ],
+        'createTokenFromTransaction' => [
+            'queryRequest' => Query::class,
+            '?cardRequest' => Card::class
+        ],
+        'updateToken' => [
+            'queryRequest' => Query::class,
+            '?cardRequest' => Card::class,
+            '?customerRequest' => Customer::class
+        ],
+        'getTokenDetails' => ['queryRequest' => Query::class],
+        'cancelToken' => ['queryRequest' => Query::class],
+        'reactivateToken' => ['queryRequest' => Query::class],
+        'createSubscription' => [
+            'orderRequest' => Order::class,
+            'subscriptionRequest' => Subscription::class,
+            'cardRequest' => Card::class
+        ],
+        'updateSubscription' => [
+            'queryRequest' => Query::class,
+            'subscriptionRequest' => Subscription::class,
+            '?paymentRequest' => Payment::class
+        ],
+        'getSubscriptionDetails' => ['queryRequest' => Query::class],
+        'cancelSubscription' => ['queryRequest' => Query::class]
+    ];
     const METHODS_RESULT = ['getPaymentUuid' => 'legacyTransactionKeyResult'];
-    /** @var \SoapClient SOAP Client */
+    /** @var SoapClient SOAP Client */
     private $soapClient;
     /** @var string Shop id */
     private $shopId;
@@ -140,7 +172,8 @@ class WebServices
      * @param string $mode Transaction type (TEST or PRODUCTION)
      * @param array $contextOptions Context options
      * @param array $soapClientOptions
-     * @throws \SoapFault
+     *
+     * @throws SoapFault
      */
     public function __construct(
         string $wsdl,
@@ -156,22 +189,31 @@ class WebServices
         $this->mode = $mode;
 
         // Context options
-        $contextOptions = array_replace_recursive(['ssl' => ['peer_name'        => parse_url($wsdl, PHP_URL_HOST) ?? null,
-                                                             'verify_peer'      => true,
-                                                             'verify_peer_name' => true,
-                                                             'cafile'           => __DIR__ . '/cacert.pem',
-                                                             'SNI_enabled'      => true]],
-                                                  $contextOptions);
+        $contextOptions = array_replace_recursive(
+            [
+                'ssl' => [
+                    'peer_name' => parse_url($wsdl, PHP_URL_HOST) ?? null,
+                    'verify_peer' => true,
+                    'verify_peer_name' => true,
+                    'cafile' => __DIR__ . '/cacert.pem',
+                    'SNI_enabled' => true
+                ]
+            ],
+            $contextOptions
+        );
 
         // Init SOAP client
-        $soapClientOptions = array_merge([
-            'trace' => true,
-            'exceptions' => true,
-            'encoding' => 'UTF-8',
-            'stream_context' => stream_context_create($contextOptions)
-        ], $soapClientOptions);
-        
-        $this->soapClient = new \SoapClient($wsdl, $soapClientOptions);
+        $soapClientOptions = array_merge(
+            [
+                'trace' => true,
+                'exceptions' => true,
+                'encoding' => 'UTF-8',
+                'stream_context' => stream_context_create($contextOptions)
+            ],
+            $soapClientOptions
+        );
+
+        $this->soapClient = new SoapClient($wsdl, $soapClientOptions);
     }
 
     /**
@@ -191,25 +233,40 @@ class WebServices
      */
     private function log()
     {
-        if (!is_null($this->logFile) && ((is_file($this->logFile) && is_writable($this->logFile)) || (!is_file($this->logFile) && is_writable(dirname($this->logFile))))) {
-            $logData = '>>>>>>>>>>>>>>>>>>>> Request (' . date('Y-m-d H:i:s') . ')' . "\r\n\r\n" .
-                       trim($this->getSoapClient()->__getLastRequestHeaders()) . "\r\n\r\n" .
-                       trim($this->logBeautifyXml($this->getSoapClient()->__getLastRequest())) . "\r\n\r\n" .
-                       '<<<<<<<<<<<<<<<<<<<< Response' . "\r\n\r\n" .
-                       trim($this->getSoapClient()->__getLastResponseHeaders()) . "\r\n\r\n" .
-                       trim($this->logBeautifyXml($this->getSoapClient()->__getLastResponse())) . "\r\n\r\n" .
-                       "\r\n";
-
-            // Mask credit card numbers and csc
-            $logData = preg_replace(['/<number>([0-9]{6})[0-9]+([0-9]{4})<\/number>/i',
-                                     '/<cardSecurityCode>[0-9]{1,4}<\/cardSecurityCode>/i'],
-                                    ['<number>\\1xxxxxx\\2</number>',
-                                     '<cardSecurityCode>xxx</cardSecurityCode>'],
-                                    $logData);
-
-            // Write log
-            file_put_contents($this->logFile, $logData, FILE_APPEND);
+        // No log file
+        if (null === $this->logFile) {
+            return;
         }
+
+        if (!((is_file($this->logFile) && is_writable($this->logFile)) ||
+            (!is_file($this->logFile) && is_writable(dirname($this->logFile))))) {
+            return;
+        }
+
+        $logData =
+            '>>>>>>>>>>>>>>>>>>>> Request (' . date('Y-m-d H:i:s') . ')' . "\r\n\r\n" .
+            trim($this->getSoapClient()->__getLastRequestHeaders()) . "\r\n\r\n" .
+            trim($this->logBeautifyXml($this->getSoapClient()->__getLastRequest())) . "\r\n\r\n" .
+            '<<<<<<<<<<<<<<<<<<<< Response' . "\r\n\r\n" .
+            trim($this->getSoapClient()->__getLastResponseHeaders()) . "\r\n\r\n" .
+            trim($this->logBeautifyXml($this->getSoapClient()->__getLastResponse())) . "\r\n\r\n" .
+            "\r\n";
+
+        // Mask credit card numbers and csc
+        $logData = preg_replace(
+            [
+                '/<number>([0-9]{6})[0-9]+([0-9]{4})<\/number>/i',
+                '/<cardSecurityCode>[0-9]{1,4}<\/cardSecurityCode>/i'
+            ],
+            [
+                '<number>\\1xxxxxx\\2</number>',
+                '<cardSecurityCode>xxx</cardSecurityCode>'
+            ],
+            $logData
+        );
+
+        // Write log
+        file_put_contents($this->logFile, $logData, FILE_APPEND);
     }
 
     /**
@@ -221,7 +278,11 @@ class WebServices
      */
     private function logBeautifyXml(string $xml): string
     {
-        $dom = new \DOMDocument;
+        if (!extension_loaded('dom')) {
+            throw new RuntimeException('Need DOM extension to log dialog');
+        }
+
+        $dom = new DOMDocument;
         $dom->preserveWhiteSpace = false;
         $dom->loadXML($xml);
         $dom->formatOutput = true;
@@ -234,7 +295,7 @@ class WebServices
      *
      * @param string $logFile Log filename
      *
-     * @return \ElGigi\LyraPayments\WebServices
+     * @return WebServices
      */
     public function setLogFile(string $logFile): WebServices
     {
@@ -246,9 +307,9 @@ class WebServices
     /**
      * Get Soap client.
      *
-     * @return \SoapClient
+     * @return SoapClient
      */
-    public function getSoapClient(): \SoapClient
+    public function getSoapClient(): SoapClient
     {
         return $this->soapClient;
     }
@@ -257,25 +318,28 @@ class WebServices
      * Soap request.
      *
      * @param string $functionName Function name
-     * @param array  $args         Arguments
+     * @param array $args Arguments
      *
      * @return mixed
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     private function soapRequest(string $functionName, array $args)
     {
         try {
             // Prepare args
             $args = array_merge(['commonRequest' => $this->getCommonRequest()], $args);
-            array_walk_recursive($args,
+            array_walk_recursive(
+                $args,
                 function (&$value) {
                     if ($value instanceof AbstractObject) {
                         $value = $value->getArrayCopy();
-                    } else {
-                        $value = (string) $value;
+                        return;
                     }
-                });
+
+                    $value = (string)$value;
+                }
+            );
 
             // Soap request
             $this->soapClient->__setSoapHeaders($this->getHeaders());
@@ -291,18 +355,21 @@ class WebServices
             // Check response error
             if (!property_exists($result, $resultPropertyName)) {
                 throw new LyraPaymentsException('Bad format of result', 0);
-            } else {
-                $this->lastResult = $result->{$resultPropertyName};
-
-                if (!property_exists($this->lastResult, 'commonResponse')) {
-                    throw new LyraPaymentsException('Bad format of response', 0);
-                } else {
-                    if (isset($this->lastResult->commonResponse->responseCode) && $this->lastResult->commonResponse->responseCode != 0) {
-                        throw new ResponseException($this->lastResult->commonResponse->responseCodeDetail, $this->lastResult->commonResponse->responseCode);
-                    }
-                }
             }
-        } catch (\SoapFault $e) {
+
+            $this->lastResult = $result->{$resultPropertyName};
+
+            if (!property_exists($this->lastResult, 'commonResponse')) {
+                throw new LyraPaymentsException('Bad format of response', 0);
+            }
+
+            if (isset($this->lastResult->commonResponse->responseCode) && $this->lastResult->commonResponse->responseCode != 0) {
+                throw new ResponseException(
+                    $this->lastResult->commonResponse->responseCodeDetail,
+                    $this->lastResult->commonResponse->responseCode
+                );
+            }
+        } catch (SoapFault $e) {
             $this->lastResult = null;
             throw new LyraPaymentsException($e->getMessage(), $e->getCode(), $e);
         } catch (LyraPaymentsException $e) {
@@ -314,7 +381,11 @@ class WebServices
 
             // Get and save session id
             $matches = [];
-            if (preg_match("#JSESSIONID=([-a-z0-9.]+)#i", $this->soapClient->__getLastResponseHeaders(), $matches) == 1) {
+            if (preg_match(
+                    "#JSESSIONID=([-a-z0-9.]+)#i",
+                    $this->soapClient->__getLastResponseHeaders(),
+                    $matches
+                ) == 1) {
                 if ($matches[1] != $this->soapSessionId) {
                     $this->soapSessionId = $matches[1];
                     $this->soapClient->__setCookie('JSESSIONID', $this->soapSessionId);
@@ -333,7 +404,7 @@ class WebServices
     /**
      * Add Soap headers.
      *
-     * @return \SoapHeader[]
+     * @return SoapHeader[]
      */
     private function getHeaders(): array
     {
@@ -342,17 +413,19 @@ class WebServices
         $authToken = base64_encode(hash_hmac('sha256', $requestId . $timestamp, $this->certificate, true));
 
         // Create Soap headers
-        $headerShopId = new \SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'shopId', $this->shopId);
-        $headerRequestId = new \SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'requestId', $requestId);
-        $headerTimestamp = new \SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'timestamp', $timestamp);
-        $headerMode = new \SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'mode', $this->mode);
-        $headerAuthToken = new \SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'authToken', $authToken);
+        $headerShopId = new SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'shopId', $this->shopId);
+        $headerRequestId = new SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'requestId', $requestId);
+        $headerTimestamp = new SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'timestamp', $timestamp);
+        $headerMode = new SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'mode', $this->mode);
+        $headerAuthToken = new SoapHeader(self::SOAP_HEADERS_NAMESPACE, 'authToken', $authToken);
 
-        return [$headerShopId,
-                $headerRequestId,
-                $headerTimestamp,
-                $headerMode,
-                $headerAuthToken];
+        return [
+            $headerShopId,
+            $headerRequestId,
+            $headerTimestamp,
+            $headerMode,
+            $headerAuthToken
+        ];
     }
 
     /**
@@ -362,20 +435,25 @@ class WebServices
      */
     private function genUuid(): string
     {
-        return sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-                       mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-                       mt_rand(0, 0xffff),
-                       mt_rand(0, 0x0fff) | 0x4000,
-                       mt_rand(0, 0x3fff) | 0x8000,
-                       mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
     }
 
     /**
      * Set common request.
      *
-     * @param \ElGigi\LyraPayments\Request\Common $commonRequest
+     * @param Common $commonRequest
      *
-     * @return \ElGigi\LyraPayments\WebServices
+     * @return WebServices
      */
     public function setCommonRequest(Common $commonRequest): WebServices
     {
@@ -387,13 +465,13 @@ class WebServices
     /**
      * Get common request.
      *
-     * @return \ElGigi\LyraPayments\Request\Common
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @return Common
+     * @throws LyraPaymentsException
      */
     public function getCommonRequest(): Common
     {
         if (is_null($this->commonRequest)) {
-            $this->commonRequest = new Common;
+            $this->commonRequest = new Common();
         }
         $this->commonRequest->submissionDate = $this->getDatetime();
 
@@ -428,46 +506,60 @@ class WebServices
      * __call() magic method.
      *
      * @param string $name
-     * @param array  $arguments
+     * @param array $arguments
      *
      * @return array|null
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __call(string $name, array $arguments)
     {
         // Check if method exists
-        if (isset(static::METHODS[$name])) {
-            // Check number of arguments types
-            if (($nbArgs = count(static::METHODS[$name])) == count($arguments)) {
-                $finalArguments = [];
-
-                // Check arguments
-                $iArg = 0;
-                foreach (static::METHODS[$name] as $argumentName => $type) {
-                    $required = substr($argumentName, 0, 1) != '?';
-
-                    if (!$required) {
-                        $argumentName = substr($argumentName, 1);
-                    }
-
-                    if (($required === false && is_null($arguments[$iArg])) || is_a($arguments[$iArg], $type, true)) {
-                        $finalArguments[$argumentName] = $arguments[$iArg];
-                    } else {
-                        throw new \InvalidArgumentException(sprintf('Argument "%s" of "%s::%s()" method need to be of type "%s"',
-                                                                    $argumentName, static::class, $name, $type));
-                    }
-                    $iArg++;
-                }
-
-                // Get result
-                $this->soapRequest($name, $finalArguments);
-
-                return $this->getLastResult();
-            } else {
-                throw new LyraPaymentsException(sprintf('Method "%s::%s()" needs %d arguments', static::class, $name, $nbArgs));
-            }
-        } else {
+        if (!isset(static::METHODS[$name])) {
             throw new LyraPaymentsException(sprintf('Unknown "%s::%s()" method', static::class, $name));
         }
+
+        // Check number of arguments types
+        if (($nbArgs = count(static::METHODS[$name])) != count($arguments)) {
+            throw new LyraPaymentsException(
+                sprintf(
+                    'Method "%s::%s()" needs %d arguments',
+                    static::class,
+                    $name,
+                    $nbArgs
+                )
+            );
+        }
+
+        $finalArguments = [];
+
+        // Check arguments
+        $iArg = 0;
+        foreach (static::METHODS[$name] as $argumentName => $type) {
+            $required = substr($argumentName, 0, 1) != '?';
+
+            if (!$required) {
+                $argumentName = substr($argumentName, 1);
+            }
+
+            if (!(($required === false && is_null($arguments[$iArg])) || is_a($arguments[$iArg], $type, true))) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'Argument "%s" of "%s::%s()" method need to be of type "%s"',
+                        $argumentName,
+                        static::class,
+                        $name,
+                        $type
+                    )
+                );
+            }
+
+            $finalArguments[$argumentName] = $arguments[$iArg];
+            $iArg++;
+        }
+
+        // Get result
+        $this->soapRequest($name, $finalArguments);
+
+        return $this->getLastResult();
     }
 }

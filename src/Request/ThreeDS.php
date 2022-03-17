@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request ThreeDS.
@@ -34,19 +35,23 @@ class ThreeDS extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['mode'      => '[DISABLED,ENABLED_CREATE,ENABLED_FINALIZE]',
-                             'requestId' => 'string',
-                             'pares'     => 'string',
-                             'brand'     => 'string',
-                             'enrolled'  => '[Y,N,U]',
-                             'eci'       => 'string',
-                             'xid'       => 'string',
-                             'cavv'      => 'string',
-                             'algorithm' => '[0,1,2,3]'],
-                            $data);
+        parent::__construct(
+            [
+                'mode' => '[DISABLED,ENABLED_CREATE,ENABLED_FINALIZE]',
+                'requestId' => 'string',
+                'pares' => 'string',
+                'brand' => 'string',
+                'enrolled' => '[Y,N,U]',
+                'eci' => 'string',
+                'xid' => 'string',
+                'cavv' => 'string',
+                'algorithm' => '[0,1,2,3]'
+            ],
+            $data
+        );
     }
 }

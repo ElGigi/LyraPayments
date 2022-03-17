@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request Query.
@@ -27,12 +28,16 @@ class Query extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['uuid'         => 'string',
-                             'paymentToken' => 'ans..64'],
-                            $data);
+        parent::__construct(
+            [
+                'uuid' => 'string',
+                'paymentToken' => 'ans..64'
+            ],
+            $data
+        );
     }
 }

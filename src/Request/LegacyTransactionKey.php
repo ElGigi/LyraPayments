@@ -11,6 +11,7 @@
 namespace ElGigi\LyraPayments\Request;
 
 use ElGigi\LyraPayments\AbstractObject;
+use ElGigi\LyraPayments\Exception\LyraPaymentsException;
 
 /**
  * Request LegacyTransactionKey.
@@ -28,13 +29,17 @@ class LegacyTransactionKey extends AbstractObject
      *
      * @param array $data Default data
      *
-     * @throws \ElGigi\LyraPayments\Exception\LyraPaymentsException
+     * @throws LyraPaymentsException
      */
     public function __construct(array $data = [])
     {
-        parent::__construct(['transactionId'  => 'string',
-                             'sequenceNumber' => 'n..3',
-                             'creationDate'   => 'datetime'],
-                            $data);
+        parent::__construct(
+            [
+                'transactionId' => 'string',
+                'sequenceNumber' => 'n..3',
+                'creationDate' => 'datetime'
+            ],
+            $data
+        );
     }
 }
