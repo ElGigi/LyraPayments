@@ -6,6 +6,10 @@ use [Keep a Changelog] (http://keepachangelog.com/).
 
 ## [1.2.0] - 2022-03-17
 
+### Added
+
+- Define SOAP Extension into composer requirements
+
 ### Changed
 
 - Method `AbstractObject::__set_state()` renamed to `AbstractObject::getArrayCopy()`
