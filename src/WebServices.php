@@ -271,7 +271,7 @@ class WebServices
             array_walk_recursive($args,
                 function (&$value) {
                     if ($value instanceof AbstractObject) {
-                        $value = $value->__set_state();
+                        $value = $value->getArrayCopy();
                     } else {
                         $value = (string) $value;
                     }

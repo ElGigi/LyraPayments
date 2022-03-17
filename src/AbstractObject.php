@@ -41,17 +41,17 @@ abstract class AbstractObject
     }
 
     /**
-     * __set_state() magic method.
+     * Get array copy.
      *
      * @return array
      */
-    public function __set_state(): array
+    public function getArrayCopy(): array
     {
         $vars = [];
 
         foreach ($this->data as $key => $value) {
             if ($value instanceof AbstractObject) {
-                $vars[$key] = $value->__set_state();
+                $vars[$key] = $value->getArrayCopy();
             } else {
                 $vars[$key] = $value;
             }
@@ -72,7 +72,7 @@ abstract class AbstractObject
         foreach ($this->dataDeclaration as $key => $type) {
             if (array_key_exists($key, $this->data)) {
                 if ($this->data[$key] instanceof AbstractObject) {
-                    $vars[$key] = $this->data[$key]->__set_state();
+                    $vars[$key] = $this->data[$key]->getArrayCopy();
                 } else {
                     $vars[$key] = $this->data[$key];
                 }
